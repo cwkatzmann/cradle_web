@@ -13,7 +13,8 @@ var Strategy = require('passport-facebook').Strategy;
 passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
-    callbackURL: 'http://localhost:3000/auth/facebook/callback'
+    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    profileFields: ['id', 'displayName', 'photos'],
   },
   function(accessToken, refreshToken, profile, cb) {
     // In this example, the user's Facebook profile is supplied as the user
@@ -88,7 +89,7 @@ app.get('/auth/facebook/callback',
 app.get('/profile',
   // require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
-    console.log(req.user);
+    // console.log(req.user);
     // res.render('profile', { user: req.user });
     res.send(req.user);
   });
