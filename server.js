@@ -69,39 +69,58 @@ app.use(passport.session());
 
 // Define routes.
 app.get('/',
+//render the index page;
   function(req, res) {
     res.render('home', { user: req.user });
   });
 
-app.get('/login',
-  function(req, res){
-    res.render('login');
-  });
 
 app.get('/auth/facebook',
-  passport.authenticate('facebook', {scope : 'user_photos'}));
+  passport.authenticate('facebook', {scope : 'user_photos'})
+);
 
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
-    res.redirect('/profile')
+    //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
+    res.redirect('/profile');
   });
 
 app.get('/profile',
-  // require('connect-ensure-login').ensureLoggedIn(),
+  require('connect-ensure-login').ensureLoggedIn(),
+  //^what does this do if not logged in?
   function(req, res){
-      request('https://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
-       if(err){
-         console.log('error:', err);
-       }
-      //  if(response){
-      //    console.log('response:', response);
-      //  }
-      //  if(body){
-      //    console.log('body:', body);
-      //  }
-      //  res.send(body);
-      res.send('booyah');
-  });
+
+    //query DB for user Name and Prfofile pic by FB_id(req.user.id);
+    //query for all photos that have been analyzed in DB;
+    //query Facebook for user photos
+    //compare above two
+    //display conclusion of above to user w/option to scan new photos if they exist
+    //render angular page
+      //on page:link to a route to scan photos
+
+  //     request('https://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
+  //      if(err){
+  //        console.log('error:', err);
+  //      }
+  //      if(response){
+  //        console.log('response:', response);
+  //      }
+  //     //  if(body){
+  //     //    console.log('body:', body);
+  //     //  }
+  //     //  res.send(body);
+  //     res.send('booyah');
+  // });
 });
+
+app.post('/scan',   require('connect-ensure-login').ensureLoggedIn(),
+  //^what does this do if not logged in?)
+  (req, res) => {
+    //get photo ids of photos to be evaluated by cradle API from req.body.
+    //do a request to FB Graph API for the actual photos at those ID's ({photo_id}/picture/{accestoken stuff})
+      //store id's of scanned photos in the DB
+      //upload any positive matches to an S3 bucket and store bucket URLs in DB table for positive results
+      //use cradle's JSON response and the S3 bucket address to populate a new JSON object which angular will use to render the results.
+  });
 
 app.listen(3000);
