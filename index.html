@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Test Facebook SDK</title>
+</head>
+
+<body>
+
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId: '594750964068000',
+                xfbml: true,
+                version: 'v2.8'
+            });
+            FB.AppEvents.logPageView();
+
+            FB.login(function(){
+              // Note: The call will only work if you accept the permission request
+              FB.api(
+                "/me/photos",
+                function(response) {
+                  console.log(response);
+                  if (response && !response.error) {
+                    console.log(response);
+                  }
+                }
+              );
+            }, {scope: 'user_photos'});
+
+        };
+
+        (function(d, s, id) {
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {
+                return;
+            }
+            js = d.createElement(s);
+            js.id = id;
+            js.src = "http://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+
+    <!-- <script src="app.js" charset="utf-8"></script> -->
+</body>
+
+</html>
