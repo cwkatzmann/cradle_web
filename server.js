@@ -3,7 +3,7 @@ const request = require('request');
 // const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
-var token;
+// var token;
 
 
 // Configure the Facebook strategy for use by Passport.
@@ -24,7 +24,7 @@ passport.use(new Strategy({
     // be associated with a user record in the application's database, which
     // allows for account linking and authentication with other identity
     // providers.
-    token = accessToken;
+    profile.token = accessToken;
     return cb(null, profile);
   }));
 
@@ -74,6 +74,9 @@ app.get('/',
     res.render('home', { user: req.user });
   });
 
+app.get('/login', (req, res) => {
+  res.render('login');
+});
 
 app.get('/auth/facebook',
   passport.authenticate('facebook', {scope : 'user_photos'})
@@ -89,7 +92,10 @@ app.get('/profile',
   require('connect-ensure-login').ensureLoggedIn(),
   //^what does this do if not logged in?
   function(req, res){
-
+    console.log(req.user);
+    res.render('profile', {
+      user : JSON.stringify(req.user),
+    });
     //query DB for user Name and Prfofile pic by FB_id(req.user.id);
     //query for all photos that have been analyzed in DB;
     //query Facebook for user photos
