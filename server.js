@@ -16,6 +16,7 @@ passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
     callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    profileFields: ['id', 'displayName', 'photos', 'email'],
   },
   function(accessToken, refreshToken, profile, cb) {
     // In this example, the user's Facebook profile is supplied as the user
