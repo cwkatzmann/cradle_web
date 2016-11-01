@@ -3,7 +3,6 @@ const request = require('request');
 // const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
-var request = require('request');
 var token;
 
 // Configure the Facebook strategy for use by Passport.
