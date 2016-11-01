@@ -1,6 +1,9 @@
-var express = require('express');
+const express = require('express');
+const request = require('request');
+// const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
+var token;
 
 
 // Configure the Facebook strategy for use by Passport.
@@ -14,7 +17,6 @@ passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
     callbackURL: 'http://localhost:3000/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'photos'],
   },
   function(accessToken, refreshToken, profile, cb) {
     // In this example, the user's Facebook profile is supplied as the user
@@ -22,6 +24,7 @@ passport.use(new Strategy({
     // be associated with a user record in the application's database, which
     // allows for account linking and authentication with other identity
     // providers.
+    token = accessToken;
     return cb(null, profile);
   }));
 
@@ -76,22 +79,29 @@ app.get('/login',
   });
 
 app.get('/auth/facebook',
-  passport.authenticate('facebook'));
+  passport.authenticate('facebook', {scope : 'user_photos'}));
 
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }),
-  function(req, res) {
-    // console.log('success!');
-    // console.log(req.user);
-    res.redirect('/profile');
+  passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
+    res.redirect('/profile')
   });
 
 app.get('/profile',
   // require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
-    // console.log(req.user);
-    // res.render('profile', { user: req.user });
-    res.send(req.user);
+      request('https://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
+       if(err){
+         console.log('error:', err);
+       }
+      //  if(response){
+      //    console.log('response:', response);
+      //  }
+      //  if(body){
+      //    console.log('body:', body);
+      //  }
+      //  res.send(body);
+      res.send('booyah');
   });
+});
 
 app.listen(3000);
