@@ -2,8 +2,11 @@ const express = require('express');
 const request = require('request');
 const knex = require('./knex');
 // const app = express();
+const bodyParser = require('body-parser');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
+
+
 
 // Configure the Facebook strategy for use by Passport.
 //
@@ -86,9 +89,11 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
     //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
-    knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photo}).then( () => {
+    knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value}).then( () => {
       res.redirect('/profile');
-    }
+    }).catch( (err) => {
+      res.redirect('/profile');
+    });
   });
 
 app.get('/profile',
@@ -96,9 +101,10 @@ app.get('/profile',
   //^what does this do if not logged in?
   function(req, res){
     console.log(req.user);
-    res.render('profile', {
-      user : JSON.stringify(req.user),
-    });
+    res.render('index');
+    // res.render('profile', {
+    //   user : JSON.stringify(req.user),
+    // });
     //query DB for user Name and Prfofile pic by FB_id(req.user.id);
     //query for all photos that have been analyzed in DB;
     //query Facebook for user photos
@@ -122,9 +128,21 @@ app.get('/profile',
   // });
 });
 
-app.post('/scan',   require('connect-ensure-login').ensureLoggedIn(),
+app.post('/scan',
   //^what does this do if not logged in?)
   (req, res) => {
+
+    var images = req.body;
+    // console.log(images);
+
+    request.post({url:'https://leuko-api.rhobota.com/v1.0.0/process_photo', form: images, json: true}, (err, res, body) => {
+      // console.log(err);
+      console.log(body);
+      console.log(res);
+      res.status(200).send("booyah");
+    })
+
+
     //get photo ids of photos to be evaluated by cradle API from req.body.
     //do a request to FB Graph API for the actual photos at those ID's ({photo_id}/picture/{accestoken stuff})
       //store id's of scanned photos in the DB
@@ -133,3 +151,5 @@ app.post('/scan',   require('connect-ensure-login').ensureLoggedIn(),
   });
 
 app.listen(3000);
+
+module.exports = app;
