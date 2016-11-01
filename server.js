@@ -1,8 +1,9 @@
-var express = require('express');
+const express = require('express');
+const request = require('request');
+// const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 var request = require('request');
-
 var token;
 
 // Configure the Facebook strategy for use by Passport.
@@ -16,7 +17,6 @@ passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
     callbackURL: 'http://localhost:3000/auth/facebook/callback',
-    profileFields: ['id', 'displayName', 'photos'],
   },
   function(accessToken, refreshToken, profile, cb) {
     // In this example, the user's Facebook profile is supplied as the user
@@ -79,36 +79,29 @@ app.get('/login',
     res.render('login');
   });
 
-app.get('/auth/facebook',
-  passport.authenticate('facebook', {scope: "user_photos"}));
+app.get('/auth/facebook', passport.authenticate('facebook', {scope : 'user_photos'}));
 
 app.get('/auth/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }),
-  function(req, res) {
-    // console.log('success!');
-    // console.log(req.user);
-
-    // request('http://graph.facebook.com/v2.8/132977830508706/photos&access_token=EAAIc7DZCxbqABACOZA4bmukFZC0bFOlLmCwAe3TYOCFul8xZC9QqXv7gsCayOTzUZBzvRS5VuZCZAF3JFXsfS42yzMUjGZBATrUctIX9di7dxxnCqFiLCxfOY4ZAlKn2BpeZCTbnvAjMcplQBLP5c7AdIkHIkd42ZAo8mIZD', function(err, response, body){
-    //   console.log("body", body);
-    //   res.send(body);
-    // })
-    request('https://graph.facebook.com/v2.8/me/photos?type=uploaded&access_token=' + token, function(err, response, body){
-      var photoID = JSON.parse(body).data[0].id;
-      console.log('photoID', photoID);
-      request("https://graph.facebook.com/v2.8/?id=" + photoID + "&access_token=" + token, function(err, response, body2){
-          console.log("photo body", body2);
-          res.send(body2);
-      })
-    })
-
+  passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
+    res.redirect('/profile')
   });
 
 app.get('/profile',
   // require('connect-ensure-login').ensureLoggedIn(),
   function(req, res){
-    // console.log(req.user);
-    // res.render('profile', { user: req.user });
-    res.send(req.user);
+      request('https://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
+       if(err){
+         console.log('error:', err);
+       }
+      //  if(response){
+      //    console.log('response:', response);
+      //  }
+      //  if(body){
+      //    console.log('body:', body);
+      //  }
+      //  res.send(body);
+      res.send('booyah');
   });
+});
 
 app.listen(3000);
