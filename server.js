@@ -1,5 +1,6 @@
 const express = require('express');
 const request = require('request');
+const knex = require('./knex');
 // const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
@@ -84,7 +85,9 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
     //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
-    res.redirect('/profile');
+    knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photo}).then( () => {
+      res.redirect('/profile');
+    }
   });
 
 app.get('/profile',
