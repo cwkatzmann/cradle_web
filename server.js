@@ -3,8 +3,6 @@ const request = require('request');
 // const app = express();
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
-// var token;
-
 
 // Configure the Facebook strategy for use by Passport.
 //
@@ -25,6 +23,7 @@ passport.use(new Strategy({
     // be associated with a user record in the application's database, which
     // allows for account linking and authentication with other identity
     // providers.
+    console.log("accesstoken", accessToken);
     profile.token = accessToken;
     return cb(null, profile);
   }));
