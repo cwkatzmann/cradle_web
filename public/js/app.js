@@ -6,19 +6,42 @@ app.controller('cradleController', ['$scope', '$http', function($scope, $http) {
         method: 'GET',
         url: '/profile'
     }).then(function successCallback(response) {
-      console.log(response);
         //if response.body.redirect is true, redirect browser to facebook login
         if(response.data.redirect){
           window.location = '/login';
         } else {
         //else render the first 10 photos, and amount of total new photos, then  present option to scan new photos
-          console.log(response.data);
-          $scope.view.newPhotos = response.data.photos;
+          $scope.view.photos = response.data;
         }
     }, function errorCallback(response) {
       console.log('error');
         // called asynchronously if an error occurs
         // or server returns response with an error status.
     });
+    // $scope.scan = function(){
+    //   console.log($scope.view.photos);
+    //   $http({method: "POST",
+    //         url: "/scan",
+    //         data: $scope.view.photos,
+    //         headers: {'Content-Type': "application/x-www-form-urlencoded"}
+    //       }).then(function successCallback(response) {
+    //         console.log(response);
+    //
+    //   }, function errorCallback(response) {
+    //     console.log('error');
+    //
+    //   });
+    // }
+    $scope.scan = function(){
+      console.log($scope.view.photos);
+      var data = $scope.view.photos;
+      $http.post('/scan', data).then(function successCallback(response) {
+            console.log(response);
+
+      }, function errorCallback(response) {
+        console.log('error');
+
+      });
+    }
 
 }])

@@ -6,7 +6,6 @@ var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 
 
-
 // Configure the Facebook strategy for use by Passport.
 //
 // OAuth 2.0-based strategies require a `verify` function which receives the
@@ -115,29 +114,31 @@ app.get('/profile',
         res.json({ redirect: true });
       //query for public facebook photo urls
       } else {
-        let newPhotos = [];
-        let promises = [];
+        var promises = [];
         JSON.parse(body).data.forEach((el) => {
-          knex('photos')
-          .where('facebook_photo_id', el.id)
-          .first()
-          .then((photo) => {
-            if(!photo){
-              //send request for photo url to graph api here
-              // promises.push(new Promise(
-              //   function(resolve, reject){
-              //     request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
-              //       // console.log('count: ' + count++, response.request.uri.href);
-              //       resolve(response.request.uri.href);
-              //     });
-              console.log('no photo');
-                //}
-              // ));
-             }
-          });
+          promises.push(new Promise(
+            function(resolve, reject){
+              knex('photos')
+              .where('facebook_photo_id', el.id)
+              .first()
+              .then((photo) => {
+                if(!photo){
+                  //send request for photo url to graph api here
+                  request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
+                    // console.log('count: ' + count++, response.request.uri.href);
+                    resolve(response.request.uri.href);
+                  });
+                  // console.log('no photo');
+                }
+              });
+            }
+          ));
         });
         //construct json to render angular with;
-        console.log("promises array:", promises);
+        // console.log("promises array:", promises);
+        Promise.all(promises).then(function(urls){
+          res.json(urls);
+        })
         // res.render('index')
         // res.json(body);
       }
@@ -174,14 +175,20 @@ app.post('/scan',
   (req, res) => {
 
     var images = req.body;
+    console.log("body", req.body);
+    console.log("data", req.data);
+    var promises = [];
+
+
+    res.send('we got the photos!!!')
     // console.log(images);
 
-    request.post({url:'https://leuko-api.rhobota.com/v1.0.0/process_photo', form: images, json: true}, (err, res, body) => {
-      // console.log(err);
-      console.log(body);
-      console.log(res);
-      res.status(200).send("booyah");
-    })
+    // request.post({url:'https://leuko-api.rhobota.com/v1.0.0/process_photo', form: images, json: true}, (err, res, body) => {
+    //   // console.log(err);
+    //   console.log(body);
+    //   console.log(res);
+    //   res.status(200).send("booyah");
+    // })
 
 
     //get photo ids of photos to be evaluated by cradle API from req.body.
