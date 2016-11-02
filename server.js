@@ -1,7 +1,6 @@
 const express = require('express');
 const request = require('request');
 const knex = require('./knex');
-// const app = express();
 const bodyParser = require('body-parser');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
@@ -18,7 +17,7 @@ var Strategy = require('passport-facebook').Strategy;
 passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
-    callbackURL: 'http://localhost:3000/auth/facebook/callback',
+    callbackURL: 'http://localhost:3000/home',
     profileFields: ['id', 'displayName', 'photos', 'email'],
   },
   function(accessToken, refreshToken, profile, cb) {
@@ -57,6 +56,7 @@ var app = express();
 // Configure view engine to render EJS templates.
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+app.use('/static', express.static(__dirname + '/public'));
 
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
@@ -75,7 +75,11 @@ app.use(passport.session());
 app.get('/',
 //render the index page;
   function(req, res) {
-    res.render('home', { user: req.user });
+    if(req.user){
+      res.redirect('/home');
+    } else {
+      res.redirect('/login');
+    }
   });
 
 app.get('/login', (req, res) => {
@@ -86,25 +90,62 @@ app.get('/auth/facebook',
   passport.authenticate('facebook', {scope : 'user_photos'})
 );
 
-app.get('/auth/facebook/callback',
+app.get('/home',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
     //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
     knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value}).then( () => {
-      res.redirect('/profile');
+      res.render('home');
     }).catch( (err) => {
-      res.redirect('/profile');
+      res.render('home');
     });
   });
 
 app.get('/profile',
-  require('connect-ensure-login').ensureLoggedIn(),
+  // require('connect-ensure-login').ensureLoggedIn(),
   //^what does this do if not logged in?
   function(req, res){
-    console.log(req.user);
-    res.render('index');
-    // res.render('profile', {
-    //   user : JSON.stringify(req.user),
-    // });
+    // console.log(req.user);
+    // res.render('index');
+    // var count = 0;
+
+    request('https://graph.facebook.com/v2.8/' + req.user.id + '/photos?type=uploaded&limit=999&access_token=' + req.user.token, (err, response, body) => {
+      //handles invalid token
+      console.log('response:', response.statusCode);
+      if(response.statusCode !== 200){
+        res.json({ redirect: true });
+      //query for public facebook photo urls
+      } else {
+        let newPhotos = [];
+        let promises = [];
+        JSON.parse(body).data.forEach((el) => {
+          knex('photos')
+          .where('facebook_photo_id', el.id)
+          .first()
+          .then((photo) => {
+            if(!photo){
+              //send request for photo url to graph api here
+              // promises.push(new Promise(
+              //   function(resolve, reject){
+              //     request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
+              //       // console.log('count: ' + count++, response.request.uri.href);
+              //       resolve(response.request.uri.href);
+              //     });
+              console.log('no photo');
+                //}
+              // ));
+             }
+          });
+        });
+        //construct json to render angular with;
+        console.log("promises array:", promises);
+        // res.render('index')
+        // res.json(body);
+      }
+    });
+
+
+
+
     //query DB for user Name and Prfofile pic by FB_id(req.user.id);
     //query for all photos that have been analyzed in DB;
     //query Facebook for user photos
@@ -113,7 +154,7 @@ app.get('/profile',
     //render angular page
       //on page:link to a route to scan photos
 
-  //     request('https://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
+  //     request('http://graph.facebook.com/' + '132991980507291' + '/picture?access_token=' + token, (err, response, body) => {
   //      if(err){
   //        console.log('error:', err);
   //      }
