@@ -1,0 +1,11 @@
+<div ng-controller="scanController">
+  <h3>Results</h3>
+  <div>
+  CRADLE detected {{view.results.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
+  </div>
+  <div>
+    <img ng-src="view.results.annotated_image"></img>
+    <span>Left eye match percentage: {{(view.results.left_eye.leuko_prob * 100) + '%'}}</span>
+    <span>Right eye match percentage: {{(view.results.right_eye.leuko_prob * 100) + '%'}}</span>
+  </div>
+</div>

@@ -1,5 +1,5 @@
 var app = angular.module('cradle', []);
-app.controller('cradleController', ['$scope', '$http', function($scope, $http) {
+app.controller('profileController', ['$scope', '$http', function($scope, $http){
     $scope.view = {};
 
     $http({
@@ -11,7 +11,8 @@ app.controller('cradleController', ['$scope', '$http', function($scope, $http) {
           window.location = '/login';
         } else {
         //else render the first 10 photos, and amount of total new photos, then  present option to scan new photos
-          $scope.view.photos = response.data;
+          $scope.view.photos = response.data.urls;
+          $scope.view.username = response.data.username;
         }
     }, function errorCallback(response) {
       console.log('error');
@@ -19,14 +20,11 @@ app.controller('cradleController', ['$scope', '$http', function($scope, $http) {
         // or server returns response with an error status.
     });
     $scope.scan = function(){
-      console.log($scope.view.photos);
       var data = $scope.view.photos;
       $http.post('/scan', data).then(function successCallback(response) {
-            console.log(response);
-
+        console.log(response);
       }, function errorCallback(response) {
         console.log('error');
-
       });
     }
 
