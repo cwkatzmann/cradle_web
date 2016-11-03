@@ -1,6 +1,6 @@
 <div ng-controller="profileController">
   <h3>Profile</h3>
-  <p>Hello, {{view.username + '.'}} We found {{view.photos.length}} new photos that have not been scanned.</p>
+  <p>Hello, {{view.username}} We found {{view.urls.length}} new photos that have not been scanned.</p>
   <button type="button"><a href="#/scan">scan now</a></button>
   <div ng-repeat="photo in photos | limitTo: 10">
     <img ng-src="photo"></img>

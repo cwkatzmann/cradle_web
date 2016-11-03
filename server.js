@@ -175,7 +175,8 @@ app.post('/scan',
           // console.log(preppedUrl);
             request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
               // console.log(JSON.parse(body));
-              resolve(JSON.parse(body));
+              let objBody = JSON.parse(body);
+              resolve({body:objBody, url:url});
           });
         }
       ));
@@ -184,11 +185,8 @@ app.post('/scan',
     Promise.all(promises).then(function(data){
       var count = 0;
       data.forEach((el)=>{
-        if(el.faces && el.faces.length > 0 ){
-          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-face found number' + ++count);
+        if(el.body.faces && el.body.faces.length > 0 ){
           results.push(el);
-        } else {
-          console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-no match");
         }
       });
       res.json(results);
