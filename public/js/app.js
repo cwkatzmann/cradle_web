@@ -18,20 +18,6 @@ app.controller('cradleController', ['$scope', '$http', function($scope, $http) {
         // called asynchronously if an error occurs
         // or server returns response with an error status.
     });
-    // $scope.scan = function(){
-    //   console.log($scope.view.photos);
-    //   $http({method: "POST",
-    //         url: "/scan",
-    //         data: $scope.view.photos,
-    //         headers: {'Content-Type': "application/x-www-form-urlencoded"}
-    //       }).then(function successCallback(response) {
-    //         console.log(response);
-    //
-    //   }, function errorCallback(response) {
-    //     console.log('error');
-    //
-    //   });
-    // }
     $scope.scan = function(){
       console.log($scope.view.photos);
       var data = $scope.view.photos;

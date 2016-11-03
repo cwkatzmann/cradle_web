@@ -17,7 +17,8 @@
     "passport": "^0.3.2",
     "passport-facebook": "^2.1.1",
     "pg": "^6.1.0",
-    "request": "^2.76.0"
+    "request": "^2.76.0",
+    "urlencode": "^1.1.0"
   },
   "devDependencies": {
     "chai": "^3.5.0",

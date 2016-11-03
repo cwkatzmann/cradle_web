@@ -2,6 +2,7 @@ const express = require('express');
 const request = require('request');
 const knex = require('./knex');
 const bodyParser = require('body-parser');
+var urlencode = require('urlencode');
 var passport = require('passport');
 var Strategy = require('passport-facebook').Strategy;
 
@@ -177,9 +178,56 @@ app.post('/scan',
   (req, res) => {
 
     var images = req.body;
-    console.log("body", req.body);
-    console.log("data", req.data);
     var promises = [];
+
+
+    //   request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=http%3A%2F%2Fscontent.xx.fbcdn.net%2Fv%2Ft1.0-9%2F14910423_132691627205641_6556159563620323851_n.jpg%3Foh%3D9969cf84c010396523425fdbd5e9b333%26oe%3D589F34FC&annotate_image=true', function(err, response, body){
+    //     console.log(JSON.parse(body));
+    // })
+    //   request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + 'http%3A%2F%2Fscontent.xx.fbcdn.net/v/t1.0-9/14910423_132691627205641_6556159563620323851_n.jpg%3Foh%3D9969cf84c010396523425fdbd5e9b333%26oe%3D589F34FC' + '&annotate_image=true', function(err, response, body){
+    //     console.log(JSON.parse(body));
+    // })
+
+    // console.log(urlencode("http://scontent.xx.fbcdn.net/v/t1.0-9/14910559_132691623872308_8495779231369065204_n.jpg?oh=d020379d12866a41f0537c524c324c77&oe=58883DA9"));
+
+    images.forEach((url) => {
+      promises.push(new Promise(
+        function(resolve, reject){
+          var preppedUrl = url.replace('https', 'http');
+          // console.log(preppedUrl);
+            request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
+              // console.log(JSON.parse(body));
+              resolve(JSON.parse(body));
+          })
+        }
+      ))
+    })
+
+
+
+
+    Promise.all(promises).then(function(data){
+      // console.log(data);
+      var count = 0;
+      data.forEach((el)=>{
+        if(el.faces && el.faces.length > 0 ){
+          console.log('=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-face found number' + ++count, el.faces);
+        } else {
+          console.log("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-no match");
+        }
+        // console.log('element number: ' + count++, el);
+      })
+    })
+    // var time = 0;
+    // promises.forEach(function(promise){
+    //   time += 500;
+    //   setTimeout(function(){
+    //     promise.then(function(data){
+    //       // console.log(data.faces);
+    //     })
+    //   }, time)
+    // })
+
 
 
     res.send('we got the photos!!!')
