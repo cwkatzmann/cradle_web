@@ -18,7 +18,7 @@ var Strategy = require('passport-facebook').Strategy;
 passport.use(new Strategy({
     clientID: '594750964068000',
     clientSecret: 'd1200f6cb55836e222c751ab3317441f',
-    callbackURL: 'http://localhost:3000/home',
+    callbackURL: 'http://localhost:3000/auth/facebook/callback',
     profileFields: ['id', 'displayName', 'photos', 'email'],
   },
   function(accessToken, refreshToken, profile, cb) {
@@ -79,7 +79,7 @@ app.get('/',
 //render the index page;
   function(req, res) {
     if(req.user){
-      res.redirect('/home');
+      res.render('index');
     } else {
       res.redirect('/login');
     }
@@ -93,13 +93,13 @@ app.get('/auth/facebook',
   passport.authenticate('facebook', {scope : 'user_photos'})
 );
 
-app.get('/home',
+app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
     //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
     knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value}).then( () => {
-      res.render('home');
+      res.redirect('/');
     }).catch( (err) => {
-      res.render('home');
+      res.redirect('/');
     });
   });
 

@@ -1,4 +1,16 @@
-var app = angular.module('cradle', []);
+var app = angular.module('cradle', ['ngRoute']);
+
+app.config(function($routeProvider) {
+  $routeProvider.when('/', {
+    templateUrl : 'static/partials/profile.html', //do we need static?
+    controller : 'profileController',
+  })
+  .when('/scan', {
+    templateUrl : 'static/partials/scan.html', //do we need static?
+    controller : 'scanController',
+  });
+});
+
 app.controller('profileController', ['$scope', '$http', function($scope, $http){
     $scope.view = {};
 
@@ -6,7 +18,7 @@ app.controller('profileController', ['$scope', '$http', function($scope, $http){
         method: 'GET',
         url: '/profile'
     }).then(function successCallback(response) {
-        //if response.body.redirect is true, redirect browser to facebook login
+        //if response.body.redirect is true, the FB OAuth token has expired, so redirect browser to facebook login.
         if(response.data.redirect){
           window.location = '/login';
         } else {
@@ -28,4 +40,8 @@ app.controller('profileController', ['$scope', '$http', function($scope, $http){
       });
     }
 
+}])
+
+app.controller('scanController', ['$scope', function($scope){
+  $scope.view = {};
 }])
