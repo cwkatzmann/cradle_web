@@ -10,3 +10,20 @@
   bottom :50%;
   height : 300%;
 }
+
+.card {
+  width: 500px;
+}
+
+.scan-crop {
+    width: 400px;
+    height: 200px;
+    overflow: hidden;
+}
+
+.scan-crop img {
+  position: relative;
+  right:50%;
+  bottom :50%;
+  height : 300%;
+}

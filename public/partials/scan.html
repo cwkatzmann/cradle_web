@@ -1,12 +1,47 @@
 <div ng-controller="scanController">
-  <h3>Results</h3>
-  <div>
-  CRADLE detected {{view.response.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
-  </div>
-  <div ng-repeat="result in view.response">
-    <img ng-src="{{result.body.annotated_image}}" height="100px"></img>
-    <span>Left eye match percentage: {{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</span>
-    <span>Right eye match percentage: {{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</span>
-    <span><a ng-href="{{result.url}}">Original photo</a></span>
-  </div>
+    <h3>Results</h3>
+
+    <div>
+        CRADLE detected {{view.response.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
+    </div>
+    <!-- <div ng-repeat="result in view.response">
+        <img ng-src="{{result.body.annotated_image}}" height="100px"></img>
+        <span>Left eye match percentage: {{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</span>
+        <span>Right eye match percentage: {{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</span>
+        <span><a ng-href="{{result.url}}">Original photo</a></span>
+    </div> -->
+
+    <div class="ui card" ng-repeat="result in view.response">
+        <div class="content">
+            <div class="header">Result</div>
+        </div>
+        <div class="content scan-crop">
+            <img ng-src="{{result.body.annotated_image}}">
+        </div>
+        <div class="content">
+            <h4 class="ui sub header">Details</h4>
+            <div class="ui small feed">
+                <div class="event">
+                    <div class="content">
+                        <div class="summary">
+                            <span>Left eye match percentage: {{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="event">
+                    <div class="content">
+                        <div class="summary">
+                            <span>Right eye match percentage: {{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="extra content">
+            <button class="ui button"><a ng-href="{{result.url}}">Original photo</a></span>
+        </div>
+    </div>
+
+
+
 </div>
