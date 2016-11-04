@@ -1,5 +1,10 @@
 var app = angular.module('cradle', ['ngRoute']);
 
+
+if (window.location.hash = "#_=_") {
+    window.location.hash = "";
+}
+
 app.config(function($routeProvider) {
     $routeProvider.when('/', {
             templateUrl: 'static/partials/profile.html', //do we need static?
@@ -15,9 +20,9 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 
     var obj = {};
 
-      obj.getRawPhotos = function(){
+    obj.getRawPhotos = function() {
 
-        return new Promise(function (resolve, reject) {
+        return new Promise(function(resolve, reject) {
 
             $http({
                 method: 'GET',
@@ -35,8 +40,8 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
                 reject(response);
                 // called asynchronously if an error occurs
                 // or server returns response with an error status.
-          });
-      });
+            });
+        });
     };
 
     return obj;
@@ -46,28 +51,26 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
     $scope.view = {};
 
-    $scope.view.urls = undefined;
-    $scope.view.username = undefined;
-
-    rawPhotosFactory.getRawPhotos().then(function(response){
-      console.log(response.data);
-      $scope.view.urls = response.data.urls;
-      $scope.view.username = response.data.username;
-      $scope.$digest();
+    rawPhotosFactory.getRawPhotos().then(function(response) {
+        console.log(response.data);
+        $scope.view.urls = response.data.urls;
+        $scope.view.username = response.data.username;
+        $scope.$digest();
     });
 }]);
 
 app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
-    $scope.view = {};
 
-    rawPhotosFactory.getRawPhotos().then(function(response){
-      $http.post('/scan', response.data.urls)
-      .then(function success(response) {
-        console.log(response);
-        // $scope.view.results = response.data.results;
-      }, function error(response) {
-        console.log('error');
-      });
+    rawPhotosFactory.getRawPhotos().then(function(response) {
+        $http.post('/scan', response.data.urls)
+            .then(function success(response) {
+                $scope.view = {};
+                console.log(response);
+                $scope.view.response = response.data;
+                // $scope.$apply();
+            }, function error(response) {
+                console.log('error');
+            });
     });
 
 }])
