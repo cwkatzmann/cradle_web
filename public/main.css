@@ -11,11 +11,7 @@
   height : 300%;
 }
 
-.card {
-  width: 500px;
-}
-
-.scan-crop {
+/*.scan-crop {
     width: 400px;
     height: 200px;
     overflow: hidden;
@@ -26,4 +22,16 @@
   right:50%;
   bottom :50%;
   height : 300%;
+}*/
+
+.scan-header-wrapper {
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.flagged-img {
+  display: flex;
+  justify-content: center;
 }
