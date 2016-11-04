@@ -13,9 +13,11 @@ app.config(function($routeProvider) {
 
 app.factory('rawPhotosFactory', ['$http', function($http) {
 
-    var obj = {}
+    var obj = {};
 
-      obj.getRawPhotos = new Promise(function (resolve, reject) {
+      obj.getRawPhotos = function(){
+
+        return new Promise(function (resolve, reject) {
 
             $http({
                 method: 'GET',
@@ -35,6 +37,7 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
                 // or server returns response with an error status.
           });
       });
+    };
 
     return obj;
 
@@ -46,7 +49,7 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', func
     $scope.view.urls = undefined;
     $scope.view.username = undefined;
 
-    rawPhotosFactory.getRawPhotos.then(function(response){
+    rawPhotosFactory.getRawPhotos().then(function(response){
       console.log(response.data);
       $scope.view.urls = response.data.urls;
       $scope.view.username = response.data.username;
@@ -57,7 +60,7 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', func
 app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
     $scope.view = {};
 
-    rawPhotosFactory.getRawPhotos.then(function(response){
+    rawPhotosFactory.getRawPhotos().then(function(response){
       $http.post('/scan', response.data.urls)
       .then(function success(response) {
         console.log(response);
