@@ -33,6 +33,7 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
                     window.location = '/login';
                 } else {
                     //return all of the response data to be used in both controllers
+                    console.log(response);
                     resolve(response);
                 }
             }, function error(response) {
@@ -50,24 +51,26 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 
 app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
     $scope.view = {};
+    $scope.view.loading = true;
 
     rawPhotosFactory.getRawPhotos().then(function(response) {
-        console.log(response.data);
         $scope.view.urls = response.data.urls;
         $scope.view.username = response.data.username;
         $scope.$digest();
+        $scope.view.loading = false;
     });
 }]);
 
 app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
 
+    $scope.view = {};
+    $scope.view.loading = true;
+
     rawPhotosFactory.getRawPhotos().then(function(response) {
         $http.post('/scan', response.data.urls)
             .then(function success(response) {
-                $scope.view = {};
-                console.log(response);
                 $scope.view.response = response.data;
-                // $scope.$apply();
+                $scope.view.loading = false;
             }, function error(response) {
                 console.log('error');
             });

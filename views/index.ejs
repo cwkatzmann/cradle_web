@@ -6,16 +6,17 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.6/semantic.min.css">
         <link rel="stylesheet" href="/static/main.css">
     </head>
-    <div class="ui inverted menu">
-        <div class="header item">Cradle</div>
-        <div class="right menu">
-					<div class="active item">Link</div>
-					<a class="item">Link</a>
-          <a class="item active">Link</a>
-        </div>
-    </div>
     <body ng-app="cradle">
-        <div ng-view></div>
+      <div class="ui inverted menu">
+          <div class="header item">Cradle</div>
+          <div class="right menu">
+            <div class="active item">Link</div>
+            <a class="item">Link</a>
+            <a class="item active">Link</a>
+          </div>
+      </div>
+      <div ng-view></div>
+        <div class="loader" ng-show="view.loading">Loading...</div>
     </body>
     <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.min.js"></script>
