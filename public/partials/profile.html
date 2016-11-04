@@ -2,7 +2,9 @@
   <h3>Profile</h3>
   <p>Hello, {{view.username}} We found {{view.urls.length}} new photos that have not been scanned.</p>
   <button type="button"><a href="#/scan">scan now</a></button>
-  <div ng-repeat="photo in photos | limitTo: 10">
-    <img ng-src="photo"></img>
+  <div ng-repeat="url in view.urls | limitTo: 10">
+    <div class="crop">
+      <img ng-src="{{url}}"></img>
+    </div>
   </div>
 </div>
