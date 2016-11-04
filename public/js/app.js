@@ -56,8 +56,8 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', func
     rawPhotosFactory.getRawPhotos().then(function(response) {
         $scope.view.urls = response.data.urls;
         $scope.view.username = response.data.username;
-        $scope.$digest();
         $scope.view.loading = false;
+        $scope.$digest();
     });
 }]);
 
