@@ -1,3 +1,4 @@
+var randomPositiveMatch = true;
 const express = require('express');
 const request = require('request');
 const knex = require('./knex');
@@ -72,6 +73,18 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveU
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
+
+
+
+//Randomize Positive Lueko Matches (until API is fully working)
+
+var randomizePositive = function(el){
+  var outOfTen = 3;
+  if (Math.random() < (1 / outOfTen)){
+    el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+    el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+  }
+}
 
 
 // Define routes.
@@ -186,7 +199,13 @@ app.post('/scan',
       var count = 0;
       data.forEach((el)=>{
         if(el.body.faces && el.body.faces.length > 0 ){
-          results.push(el);
+          //insert random positive lueko matches
+          if (randomPositiveMatch){
+            randomizePositive(el);
+          }
+          if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
+            results.push(el);
+          }
         }
       });
       res.json(results);
