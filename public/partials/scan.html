@@ -18,34 +18,34 @@
             <h4 class="ui horizontal divider header">Match {{$index + 1}}</h4>
 
             <div class="image-results-wrapper">
-              <div class="scan-crop flagged-img">
-                <img ng-src="{{result.body.faces[0].annotated_image}}" height="300px">
-              </div>
+                <div class="scan-crop flagged-img">
+                    <img ng-src="{{result.body.faces[0].annotated_image}}" height="150px">
+                </div>
 
-                <div class="six wide column">
-
-                  <table class="ui table results-table">
-                    <thead>
-                      <tr>
-                        <th>Eye</th>
-                        <th>Match Percentage</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>Left</td>
-                        <td>{{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</td>
-                      </tr>
-                      <tr>
-                        <td>Right</td>
-                        <td>{{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</td>
-                      </tr>
-                    </tbody>
-                  </table>
-                  <button class="ui button"><a ng-href="{{result.url}}">Original photo</a></span>
+                <div class="image-details-wrapper">
+                    <table class="ui table">
+                        <thead>
+                            <tr>
+                                <th>Eye</th>
+                                <th>Match Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Left</td>
+                                <td>{{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</td>
+                            </tr>
+                            <tr>
+                                <td>Right</td>
+                                <td>{{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button class="ui right labeled icon button">
+                        <i class="right arrow icon"></i>
+                        <a ng-href="{{result.url}}">View Original</a>
+                    </button>
                   </div>
-
-
 
             </div>
 
