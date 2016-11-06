@@ -1,4 +1,5 @@
 var randomPositiveMatch = true;
+
 const express = require('express');
 const request = require('request');
 const knex = require('./knex');
@@ -78,9 +79,13 @@ app.use(passport.session());
 
 //Randomize Positive Lueko Matches (until API is fully working)
 
+var randomCount = 0;
+var maxMatches = 5;
+
 var randomizePositive = function(el){
   var outOfTen = 3;
-  if (Math.random() < (1 / outOfTen)){
+  if (Math.random() < (1 / outOfTen) && randomCount < maxMatches){
+    randomCount++;
     el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
     el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
   }
