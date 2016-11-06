@@ -8,6 +8,7 @@
             <div>
                 CRADLE detected {{view.response.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
             </div>
+            <div><a href="#">Click here for suggested next steps.</a></div>
 
         </div>
 
@@ -16,31 +17,43 @@
 
             <h4 class="ui horizontal divider header">Match {{$index + 1}}</h4>
 
-            <div class="scan-crop flagged-img">
+            <div class="image-results-wrapper">
+              <div class="scan-crop flagged-img">
                 <img ng-src="{{result.body.faces[0].annotated_image}}" height="300px">
+              </div>
+
+                <div class="six wide column">
+
+                  <table class="ui table results-table">
+                    <thead>
+                      <tr>
+                        <th>Eye</th>
+                        <th>Match Percentage</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Left</td>
+                        <td>{{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</td>
+                      </tr>
+                      <tr>
+                        <td>Right</td>
+                        <td>{{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <button class="ui button"><a ng-href="{{result.url}}">Original photo</a></span>
+                  </div>
+
+
+
             </div>
 
-            <div>
 
-                <table class="ui definition table">
-                    <tbody>
-                        <tr>
-                            <td class="two wide column">Left eye</td>
-                            <td>match percentage: {{(result.body.faces[0].left_eye.leuko_prob * 100) + '%'}}</td>
-                        </tr>
-                        <tr>
-                            <td>Right eye</td>
-                            <td>match percentage: {{(result.body.faces[0].right_eye.leuko_prob * 100) + '%'}}</td>
-                        </tr>
-                    </tbody>
-                </table>
+        </div>
 
-                <button class="ui button"><a ng-href="{{result.url}}">Original photo</a></span>
-      </div>
+
     </div>
 
 
 </div>
-
-
-  </div>

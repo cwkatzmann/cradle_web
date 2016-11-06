@@ -79,18 +79,14 @@
   }
 }
 
-/*.scan-crop {
-    width: 400px;
-    height: 200px;
-    overflow: hidden;
-}
 
-.scan-crop img {
-  position: relative;
-  right:50%;
-  bottom :50%;
-  height : 300%;
-}*/
+/*=-=-=-=-=-=-=-=-=-SCAN PAGE=-=-=-=-=-=-=-=-=-=-=-*/
+
+
+.image-results-wrapper {
+  display: flex;
+  justify-content: center;
+}
 
 .scan-header-wrapper {
   height: 120px;
