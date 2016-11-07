@@ -66,6 +66,16 @@
   }
 }
 
+/*=-=-=-=-=-=-=-=-=-=LOGIN PAGE=-=-=-=-=-=-=-=-=-=*/
+
+.login {
+  padding-top: 200px !important;
+}
+
+.login-link {
+  color: #ffffff !important;
+}
+
 /*-=-=-=-=-=-=-=-=-=-=PROFILE PAGE=-=-=-=-=-=-=-=-=-=-*/
 
 .photos {
