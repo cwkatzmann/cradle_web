@@ -50,9 +50,9 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 }]);
 
 
-remember whether user is shipping off just new photos or all their photos
+// remember whether user is shipping off just new photos or all their photos
 app.service('fetchProperties', function(){
-  var fetchType;
+  var fetchType = "new";
   return {
     setFetch: function(val){
       fetchType = val;
@@ -63,7 +63,7 @@ app.service('fetchProperties', function(){
   }
 })
 
-app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties' function($scope, $http, rawPhotosFactory, fetchProperties) {
+app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
     $scope.view = {};
     $scope.view.loading = true;
 
@@ -93,11 +93,12 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
     $scope.view.loading = true;
 
     if (fetchProperties.getFetch() === "all"){
+        console.log("scanning all the photos");
         $http({
             method: 'GET',
             url: '/profile/all'
         }).then(function(response){
-          $http.post('/scan', response.data.images)
+          $http.post('/scan/all', response.data.images)
               .then(function success(response) {
                   console.log(response);
                   $scope.view.response = response.data;
@@ -106,9 +107,9 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
                   console.log('error');
               });
         })
-    } else {
+    } else if (fetchProperties.getFetch() === "new"){
       rawPhotosFactory.getRawPhotos().then(function(response) {
-        $http.post('/scan', response.data.images)
+        $http.post('/scan/new', response.data.images)
         .then(function success(response) {
           console.log(response);
           $scope.view.response = response.data;
