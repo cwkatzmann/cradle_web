@@ -68,8 +68,6 @@
 
 /*-=-=-=-=-=-=-=-=-=-=LOGIN PAGE=-=-=-=-=-=-=-=-=-=-*/
 
-
-
 .header-wrapper {
   display: flex;
   justify-content: space-between;
@@ -123,6 +121,14 @@
 footer {
   height: 100px;
   background-color: #0E6EB8;
+}
+
+.login {
+  padding-bottom: 50px !important;
+}
+
+.login-link {
+  color: #ffffff !important;
 }
 
 /*-=-=-=-=-=-=-=-=-=-=PROFILE PAGE=-=-=-=-=-=-=-=-=-=-*/

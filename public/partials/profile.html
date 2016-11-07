@@ -4,8 +4,8 @@
     <div class="ui one column stackable center aligned page grid">
       <h3 class="column twelve wide">Profile</h3>
       <p ng-hide="view.gotAll" class="column twelve wide">Hello, {{view.username + '.'}} We found {{view.images.length || 0}} new photos that have not been scanned.</p>
-      <button type="button" class="column six wide"><a href="#/scan">scan now</a></button>
-      <button type="button" class="column six wide" ng-click="getAllPhotos()"><a href="#/">get all photos</a></button>
+      <button type="button" class="column six wide ui button"><a href="#/scan">scan now</a></button>
+      <button type="button" class="column six wide ui button" ng-click="getAllPhotos()"><a href="#/">get all photos</a></button>
     </div>
     <div class="photos">
       <div ng-repeat="image in view.images | limitTo: 18">
