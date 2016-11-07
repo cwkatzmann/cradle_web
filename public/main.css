@@ -79,18 +79,10 @@
   }
 }
 
-/*.scan-crop {
-    width: 400px;
-    height: 200px;
-    overflow: hidden;
-}
 
-.scan-crop img {
-  position: relative;
-  right:50%;
-  bottom :50%;
-  height : 300%;
-}*/
+/*=-=-=-=-=-=-=-=-=-SCAN PAGE=-=-=-=-=-=-=-=-=-=-=-*/
+
+
 
 .scan-header-wrapper {
   height: 120px;
@@ -101,5 +93,19 @@
 
 .flagged-img {
   display: flex;
+  justify-content: center;
+}
+
+.image-results-wrapper {
+  margin: 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.image-details-wrapper {
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
 }

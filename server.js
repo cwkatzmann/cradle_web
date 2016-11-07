@@ -1,3 +1,6 @@
+const randomPositiveMatch = true;
+const saveScannedImages = true;
+
 const express = require('express');
 const request = require('request');
 const knex = require('./knex');
@@ -74,6 +77,22 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
+
+//Randomize Positive Lueko Matches (until API is fully working)
+
+var randomCount = 0;
+var maxMatches = 5;
+
+var randomizePositive = function(el){
+  var outOfTen = 3;
+  if (Math.random() < (1 / outOfTen) && randomCount < maxMatches){
+    randomCount++;
+    el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+    el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+  }
+}
+
+
 // Define routes.
 app.get('/',
 //render the index page;
@@ -126,10 +145,10 @@ app.get('/profile',
                 if(!photo){
                   //send request for photo url to graph api here
                   request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
-                    // console.log('count: ' + count++, response.request.uri.href);
-                    resolve(response.request.uri.href);
+                    resolve({url:response.request.uri.href, id: el.id});
                   });
-                  // console.log('no photo');
+                } else {
+                    resolve(false);
                 }
               });
             }
@@ -137,15 +156,22 @@ app.get('/profile',
         });
         //construct json to render angular with;
         // console.log("promises array:", promises);
-        Promise.all(promises).then(function(urls){
+        Promise.all(promises).then(function(els){
           //make object to send as jon here
-          let data = {}
-          data.urls = urls;
+          var data = {};
+          data.images = [];
+          els.forEach((el) => {
+            if (el){
+              var image = {};
+              image.url = el.url;
+              image.photo_id = el.id;
+              data.images.push(image);
+            }
+          })
           data.username = req.user.displayName;
+          console.log("data", data);
           res.json(data);
         })
-        // res.render('index')
-        // res.json(body);
       }
     });
 
@@ -168,15 +194,24 @@ app.post('/scan',
     var promises = [];
     var results = [];
 
-    images.forEach((url) => {
+    //save scanned images to DB
+    if (saveScannedImages){
+      images.forEach((image) => {
+        knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
+          console.log("saved a scanned image");
+        })
+      })
+    }
+
+
+    images.forEach((image) => {
+      var preppedUrl = image.url.replace('https', 'http');
       promises.push(new Promise(
         function(resolve, reject){
-          var preppedUrl = url.replace('https', 'http');
-          // console.log(preppedUrl);
             request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
               // console.log(JSON.parse(body));
               let objBody = JSON.parse(body);
-              resolve({body:objBody, url:url});
+              resolve({body:objBody, url:image.url, id:image.photo_id});
           });
         }
       ));
@@ -186,12 +221,18 @@ app.post('/scan',
       var count = 0;
       data.forEach((el)=>{
         if(el.body.faces && el.body.faces.length > 0 ){
-          results.push(el);
+          //insert random positive lueko matches
+          if (randomPositiveMatch){
+            randomizePositive(el);
+          }
+          //only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
+          if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
+            results.push(el);
+          }
         }
       });
       res.json(results);
     });
-
 
     //get photo ids of photos to be evaluated by cradle API from req.body.
     //do a request to FB Graph API for the actual photos at those ID's ({photo_id}/picture/{accestoken stuff})

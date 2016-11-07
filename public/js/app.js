@@ -54,7 +54,7 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', func
     $scope.view.loading = true;
 
     rawPhotosFactory.getRawPhotos().then(function(response) {
-        $scope.view.urls = response.data.urls;
+        $scope.view.images = response.data.images;
         $scope.view.username = response.data.username;
         $scope.view.loading = false;
         $scope.$digest();
@@ -67,8 +67,9 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', functio
     $scope.view.loading = true;
 
     rawPhotosFactory.getRawPhotos().then(function(response) {
-        $http.post('/scan', response.data.urls)
+        $http.post('/scan', response.data.images)
             .then(function success(response) {
+                console.log(response);
                 $scope.view.response = response.data;
                 $scope.view.loading = false;
             }, function error(response) {

@@ -5,9 +5,9 @@
   <p>Hello, {{view.username}} We found {{view.urls.length}} new photos that have not been scanned.</p>
   <button type="button"><a href="#/scan">scan now</a></button>
   <div class="ui grid centered">
-  <div ng-repeat="url in view.urls | limitTo: 18">
+  <div ng-repeat="image in view.images | limitTo: 18">
     <div class="crop">
-      <img ng-src="{{url}}"></img>
+      <img ng-src="{{image.url}}"></img>
     </div>
   </div>
   </div>
