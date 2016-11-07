@@ -1,4 +1,5 @@
-var randomPositiveMatch = true;
+const randomPositiveMatch = true;
+const saveScannedImages = true;
 
 const express = require('express');
 const request = require('request');
@@ -144,10 +145,10 @@ app.get('/profile',
                 if(!photo){
                   //send request for photo url to graph api here
                   request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
-                    // console.log('count: ' + count++, response.request.uri.href);
-                    resolve(response.request.uri.href);
+                    resolve({url:response.request.uri.href, id: el.id});
                   });
-                  // console.log('no photo');
+                } else {
+                  console.log("already scanned this image=-=-=-=-=-=-=-=-");
                 }
               });
             }
@@ -155,15 +156,20 @@ app.get('/profile',
         });
         //construct json to render angular with;
         // console.log("promises array:", promises);
-        Promise.all(promises).then(function(urls){
+        Promise.all(promises).then(function(els){
           //make object to send as jon here
-          let data = {}
-          data.urls = urls;
+          var data = {};
+          data.images = [];
+          els.forEach((el) => {
+            var image = {};
+            image.url = el.url;
+            image.photo_id = el.id;
+            data.images.push(image);
+          })
           data.username = req.user.displayName;
+          console.log("data", data);
           res.json(data);
         })
-        // res.render('index')
-        // res.json(body);
       }
     });
 
@@ -186,15 +192,14 @@ app.post('/scan',
     var promises = [];
     var results = [];
 
-    images.forEach((url) => {
+    images.forEach((image) => {
+      var preppedUrl = image.url.replace('https', 'http');
       promises.push(new Promise(
         function(resolve, reject){
-          var preppedUrl = url.replace('https', 'http');
-          // console.log(preppedUrl);
             request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
               // console.log(JSON.parse(body));
               let objBody = JSON.parse(body);
-              resolve({body:objBody, url:url});
+              resolve({body:objBody, url:image.url, id:image.photo_id});
           });
         }
       ));
@@ -208,9 +213,18 @@ app.post('/scan',
           if (randomPositiveMatch){
             randomizePositive(el);
           }
+          //only render results if the Cradle API managed to identify an eye
           if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
             results.push(el);
           }
+
+          //save scanned images to DB
+          if (saveScannedImages){
+            knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: el.id, public_facebook_url: el.url}).then( () => {
+              console.log("saved a scanned image");
+            })
+          }
+
         }
       });
       res.json(results);
