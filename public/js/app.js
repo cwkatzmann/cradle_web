@@ -66,6 +66,7 @@ app.service('fetchProperties', function(){
 app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
     $scope.view = {};
     $scope.view.loading = true;
+    $scope.view.gotAll = false;
 
     rawPhotosFactory.getRawPhotos().then(function(response) {
         $scope.view.images = response.data.images;
@@ -81,6 +82,7 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fet
           url: '/profile/all'
       }).then(function(response){
         $scope.view.images = response.data.images;
+        $scope.view.gotAll = true;
         // $scope.$digest();
       })
     }
@@ -91,7 +93,6 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
 
     $scope.view = {};
     $scope.view.loading = true;
-    $scope.view.gotAll = false;
 
     if (fetchProperties.getFetch() === "all"){
         console.log("scanning all the photos");

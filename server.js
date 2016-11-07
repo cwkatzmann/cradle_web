@@ -64,7 +64,7 @@ app.use('/static', express.static(__dirname + '/public'));
 
 // Use application-level middleware for common functionality, including
 // logging, parsing, and session handling.
-app.use(require('morgan')('combined'));
+app.use(require('morgan')('tiny'));
 app.use(require('cookie-parser')());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
@@ -80,17 +80,17 @@ app.use(passport.session());
 
 //Randomize Positive Lueko Matches (until API is fully working)
 
-var randomCount = 0;
-var maxMatches = 5;
-var outOfTen = 5;
-
-var randomizePositive = function(el){
-  el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-  el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-  if (Math.random() < (10 / outOfTen) && randomCount < maxMatches){
-    randomCount++;
-  }
-}
+// var randomCount = 0;
+// var maxMatches = 5;
+// var outOfTen = 5;
+//
+// var randomizePositive = function(el){
+//   el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+//   el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+//   if (Math.random() < (10 / outOfTen) && randomCount < maxMatches){
+//     randomCount++;
+//   }
+// }
 
 
 // Define routes.
@@ -197,12 +197,14 @@ app.get('/profile/:fetchType',
 app.post('/scan/:fetchType',
   (req, res) => {
 
+    console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+
     var fetchType = req.params.fetchType;
 
     var images = req.body;
     var promises = [];
     var results = [];
-    console.log("scan route is receiving these images", images);
+    // console.log("scan route is receiving these images", images);
 
     //save scanned images to DB
     if (fetchType === "new"){
@@ -221,8 +223,13 @@ app.post('/scan/:fetchType',
       promises.push(new Promise(
         function(resolve, reject){
             request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
+              if(err){
+                console.error(err);
+                resolve(err);
+              }
               // console.log(JSON.parse(body));
               let objBody = JSON.parse(body);
+              console.log('=-=-=-=-=-=-=-=resolving a promise=-=-=-=-=-=-=-=-=');
               resolve({body:objBody, url:image.url, id:image.photo_id});
           });
         }
@@ -230,18 +237,19 @@ app.post('/scan/:fetchType',
     });
 
     Promise.all(promises).then(function(data){
-      var count = 0;
+      // var count = 0;
       data.forEach((el)=>{
         console.log("received result from CRADLE API-=-=-=-=");
         if(el.body.faces && el.body.faces.length > 0 ){
           //insert random positive lueko matches
-          if (randomPositiveMatch){
-            randomizePositive(el);
-          }
+          // if (randomPositiveMatch){
+          //   randomizePositive(el);
+          // }
           // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
-          if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
-            results.push(el);
-          }
+          // if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
+          //   results.push(el);
+          // }
+          results.push(el);
         }
       });
       res.json(results);
