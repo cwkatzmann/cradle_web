@@ -101,9 +101,9 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
         }).then(function(response){
           $http.post('/scan/all', response.data.images)
               .then(function success(response) {
-                  console.log(response);
                   $scope.view.response = response.data;
-                  $scope.view.gotAll = true;
+                  console.log("$scope.view.response", $scope.view.response);
+                  $scope.view.loading = false;
               }, function error(response) {
                   console.log('error');
               });

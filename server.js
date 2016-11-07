@@ -1,5 +1,5 @@
 const randomPositiveMatch = true;
-const saveScannedImages = true;
+const saveScannedImages = false;
 
 const express = require('express');
 const request = require('request');
