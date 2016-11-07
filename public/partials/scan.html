@@ -3,7 +3,6 @@
     <div ng-hide="view.loading">
         <div class="scan-header-wrapper">
             <h3>Results</h3>
-
             <div ng-hide="view.resultFound" class="results-header-wrapper">
               <div>
                 <i class="red warning sign icon"></i>
@@ -18,20 +17,13 @@
                 CRADLE scanned {{view.response.length}} photos and was not able to detect any pictures with white eye.
               </div>
             </div>
-
-
         </div>
-
-
         <div ng-repeat="result in view.response">
-
             <h4 class="ui horizontal divider header">Match {{$index + 1}}</h4>
-
             <div class="image-results-wrapper">
                 <div class="scan-crop flagged-img">
                     <img ng-src="{{result.body.faces[0].annotated_image}}" height="150px">
                 </div>
-
                 <div class="image-details-wrapper">
                     <table class="ui table">
                         <thead>
@@ -54,20 +46,9 @@
                         <div>
                           <a ng-href="{{result.url}}">View Original <i class="angle double right icon"></i></a>
                         </div>
-
-                    <!-- <button class="ui right labeled icon button">
-                        <i class="right arrow icon"></i>
-                        <a ng-href="{{result.url}}">View Original</a>
-                    </button> -->
                   </div>
-
             </div>
-
-
         </div>
-
-
     </div>
-
-
 </div>
+<!-- <footer ng-hide="view.loading"></footer> -->

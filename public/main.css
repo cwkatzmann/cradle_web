@@ -69,25 +69,33 @@
 /*-=-=-=-=-=-=-=-=-=-=LOGIN PAGE=-=-=-=-=-=-=-=-=-=-*/
 
 
+
 .header-wrapper {
   display: flex;
   justify-content: space-between;
-  background-color: #142176;
+  background-color: #0E6EB8;
+  color: white;
+  margin-bottom: 50px;
+}
+
+.header-wrapper a {
   color: white;
 }
 
 .nav-elements ul {
+  width: 300px;
   display: flex;
+  justify-content: space-around;
   list-style-type: none;
 }
 
 .nav-elements li {
-  margin: 20px;
-  font-size: 20px;
+  margin: 15px;
+  font-size: 18px;
 }
 
 .logo {
-  margin: 20px;
+  margin: 15px;
 }
 
 .logo p {
@@ -114,6 +122,7 @@
 
 footer {
   height: 100px;
+  background-color: #0E6EB8;
 }
 
 /*-=-=-=-=-=-=-=-=-=-=PROFILE PAGE=-=-=-=-=-=-=-=-=-=-*/
