@@ -50,9 +50,9 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 }]);
 
 
-//remember whether user is shipping off just new photos or all their photos
+// remember whether user is shipping off just new photos or all their photos
 app.service('fetchProperties', function(){
-  var fetchType;
+  var fetchType = "new";
   return {
     setFetch: function(val){
       fetchType = val;
@@ -94,30 +94,41 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
     $scope.view.gotAll = false;
 
     if (fetchProperties.getFetch() === "all"){
+        console.log("scanning all the photos");
         $http({
             method: 'GET',
             url: '/profile/all'
         }).then(function(response){
-          $http.post('/scan', response.data.images)
+          $http.post('/scan/all', response.data.images)
               .then(function success(response) {
-                  console.log(response);
                   $scope.view.response = response.data;
-                  $scope.view.gotAll = true;
+                  $scope.view.loading = false;
+                  if ($scope.view.response.length > 0){
+                    $scope.view.resultsFound = true;
+                  } else {
+                    $scope.view.resultsFound = false;
+                  }
               }, function error(response) {
                   console.log('error');
               });
         })
-    } else {
+    } else if (fetchProperties.getFetch() === "new"){
       rawPhotosFactory.getRawPhotos().then(function(response) {
-        $http.post('/scan', response.data.images)
+        $http.post('/scan/new', response.data.images)
         .then(function success(response) {
-          console.log(response);
           $scope.view.response = response.data;
           $scope.view.loading = false;
+          if ($scope.view.response.length > 0){
+            $scope.view.resultsFound = true;
+          } else {
+            $scope.view.resultsFound = false;
+          }
         }, function error(response) {
           console.log('error');
         });
       });
     }
+
+
 
 }])

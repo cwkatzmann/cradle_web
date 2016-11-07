@@ -1,14 +1,24 @@
 <div ng-controller="scanController">
-
-
+  <div class="loader" ng-show="view.loading">Loading...</div>
     <div ng-hide="view.loading">
         <div class="scan-header-wrapper">
             <h3>Results</h3>
 
-            <div>
+            <div ng-hide="view.resultFound" class="results-header-wrapper">
+              <div>
+                <i class="red warning sign icon"></i>
                 CRADLE detected {{view.response.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
+              </div>
+              <div><a href="http://www.webmd.com/cancer/what-is-retinoblastoma">Click here for suggested next steps.</a></div>
             </div>
-            <div><a href="#">Click here for suggested next steps.</a></div>
+
+            <div ng-show="view.resultFound">
+              <div>
+                <i class="green checkmark icon"></i>
+                CRADLE scanned {{view.response.length}} photos and was not able to detect any pictures with white eye.
+              </div>
+            </div>
+
 
         </div>
 
@@ -41,10 +51,14 @@
                             </tr>
                         </tbody>
                     </table>
-                    <button class="ui right labeled icon button">
+                        <div>
+                          <a ng-href="{{result.url}}">View Original <i class="angle double right icon"></i></a>
+                        </div>
+
+                    <!-- <button class="ui right labeled icon button">
                         <i class="right arrow icon"></i>
                         <a ng-href="{{result.url}}">View Original</a>
-                    </button>
+                    </button> -->
                   </div>
 
             </div>

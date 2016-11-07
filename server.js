@@ -1,5 +1,5 @@
 const randomPositiveMatch = true;
-const saveScannedImages = true;
+const saveScannedImages = false;
 
 const express = require('express');
 const request = require('request');
@@ -82,13 +82,13 @@ app.use(passport.session());
 
 var randomCount = 0;
 var maxMatches = 5;
+var outOfTen = 5;
 
 var randomizePositive = function(el){
-  var outOfTen = 3;
-  if (Math.random() < (1 / outOfTen) && randomCount < maxMatches){
+  el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+  el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+  if (Math.random() < (10 / outOfTen) && randomCount < maxMatches){
     randomCount++;
-    el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-    el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
   }
 }
 
@@ -132,10 +132,8 @@ app.get('/profile/:fetchType',
 
     request('https://graph.facebook.com/v2.8/' + req.user.id + '/photos?type=uploaded&limit=999&access_token=' + req.user.token, (err, response, body) => {
       //handles invalid token
-      console.log('response:', response.statusCode);
       if(response.statusCode !== 200){
         res.json({ redirect: true });
-      //query for public facebook photo urls
       } else {
         var promises = [];
         JSON.parse(body).data.forEach((el) => {
@@ -157,7 +155,6 @@ app.get('/profile/:fetchType',
                   }
                 });
               } else if (fetchType === "all"){
-                console.log("getting all the images=-=-=-=-=-=");
                 request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
                   resolve({url:response.request.uri.href, id: el.id});
                 });
@@ -180,7 +177,6 @@ app.get('/profile/:fetchType',
             }
           })
           data.username = req.user.displayName;
-          console.log("data", data);
           res.json(data);
         })
       }
@@ -198,20 +194,25 @@ app.get('/profile/:fetchType',
       //on page:link to a route to scan photos
 });
 
-app.post('/scan',
+app.post('/scan/:fetchType',
   (req, res) => {
+
+    var fetchType = req.params.fetchType;
 
     var images = req.body;
     var promises = [];
     var results = [];
+    console.log("scan route is receiving these images", images);
 
     //save scanned images to DB
-    if (saveScannedImages){
-      images.forEach((image) => {
-        knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
-          console.log("saved a scanned image");
+    if (fetchType === "new"){
+      if (saveScannedImages){
+        images.forEach((image) => {
+          knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
+            console.log("saved a scanned image");
+          })
         })
-      })
+      }
     }
 
 
@@ -231,12 +232,13 @@ app.post('/scan',
     Promise.all(promises).then(function(data){
       var count = 0;
       data.forEach((el)=>{
+        console.log("received result from CRADLE API-=-=-=-=");
         if(el.body.faces && el.body.faces.length > 0 ){
           //insert random positive lueko matches
           if (randomPositiveMatch){
             randomizePositive(el);
           }
-          //only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
+          // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
           if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
             results.push(el);
           }
