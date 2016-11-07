@@ -102,8 +102,12 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
           $http.post('/scan/all', response.data.images)
               .then(function success(response) {
                   $scope.view.response = response.data;
-                  console.log("$scope.view.response", $scope.view.response);
                   $scope.view.loading = false;
+                  if ($scope.view.response.length > 0){
+                    $scope.view.resultsFound = true;
+                  } else {
+                    $scope.view.resultsFound = false;
+                  }
               }, function error(response) {
                   console.log('error');
               });
@@ -112,13 +116,19 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
       rawPhotosFactory.getRawPhotos().then(function(response) {
         $http.post('/scan/new', response.data.images)
         .then(function success(response) {
-          console.log(response);
           $scope.view.response = response.data;
           $scope.view.loading = false;
+          if ($scope.view.response.length > 0){
+            $scope.view.resultsFound = true;
+          } else {
+            $scope.view.resultsFound = false;
+          }
         }, function error(response) {
           console.log('error');
         });
       });
     }
+
+
 
 }])

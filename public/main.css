@@ -66,6 +66,56 @@
   }
 }
 
+/*-=-=-=-=-=-=-=-=-=-=LOGIN PAGE=-=-=-=-=-=-=-=-=-=-*/
+
+
+.header-wrapper {
+  display: flex;
+  justify-content: space-between;
+  background-color: #142176;
+  color: white;
+}
+
+.nav-elements ul {
+  display: flex;
+  list-style-type: none;
+}
+
+.nav-elements li {
+  margin: 20px;
+  font-size: 20px;
+}
+
+.logo {
+  margin: 20px;
+}
+
+.logo p {
+  font-size: 35px;
+}
+
+
+.hero-text-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.main-content-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+.description-text {
+  width: 70%;
+}
+
+footer {
+  height: 100px;
+}
+
 /*-=-=-=-=-=-=-=-=-=-=PROFILE PAGE=-=-=-=-=-=-=-=-=-=-*/
 
 .photos {
@@ -140,6 +190,13 @@
 
 .image-details-wrapper {
   width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.results-header-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
