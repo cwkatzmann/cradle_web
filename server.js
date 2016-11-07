@@ -148,7 +148,7 @@ app.get('/profile',
                     resolve({url:response.request.uri.href, id: el.id});
                   });
                 } else {
-                  console.log("already scanned this image=-=-=-=-=-=-=-=-");
+                    resolve(false);
                 }
               });
             }
@@ -161,10 +161,12 @@ app.get('/profile',
           var data = {};
           data.images = [];
           els.forEach((el) => {
-            var image = {};
-            image.url = el.url;
-            image.photo_id = el.id;
-            data.images.push(image);
+            if (el){
+              var image = {};
+              image.url = el.url;
+              image.photo_id = el.id;
+              data.images.push(image);
+            }
           })
           data.username = req.user.displayName;
           console.log("data", data);
@@ -192,6 +194,16 @@ app.post('/scan',
     var promises = [];
     var results = [];
 
+    //save scanned images to DB
+    if (saveScannedImages){
+      images.forEach((image) => {
+        knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
+          console.log("saved a scanned image");
+        })
+      })
+    }
+
+
     images.forEach((image) => {
       var preppedUrl = image.url.replace('https', 'http');
       promises.push(new Promise(
@@ -213,23 +225,14 @@ app.post('/scan',
           if (randomPositiveMatch){
             randomizePositive(el);
           }
-          //only render results if the Cradle API managed to identify an eye
+          //only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
           if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
             results.push(el);
           }
-
-          //save scanned images to DB
-          if (saveScannedImages){
-            knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: el.id, public_facebook_url: el.url}).then( () => {
-              console.log("saved a scanned image");
-            })
-          }
-
         }
       });
       res.json(results);
     });
-
 
     //get photo ids of photos to be evaluated by cradle API from req.body.
     //do a request to FB Graph API for the actual photos at those ID's ({photo_id}/picture/{accestoken stuff})
