@@ -3,3 +3,4 @@ TODO:
 -save scanned photo ids to DB
 -style login page
 -randomize positive matches
+write readme
