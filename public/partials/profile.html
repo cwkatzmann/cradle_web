@@ -1,11 +1,11 @@
 <div class="loader" ng-show="view.loading">Loading...</div>
 <div ng-controller="profileController">
   <div ng-hide="view.loading">
-  <h3>Profile</h3>
-  <p>Hello, {{view.username}} We found {{view.urls.length}} new photos that have not been scanned.</p>
+    <h3>Profile</h3>
+  <p ng-hide="view.gotAll">Hello, {{view.username}} We found {{view.urls.length || 0}} new photos that have not been scanned.</p>
   <button type="button"><a href="#/scan">scan now</a></button>
-  <button type="button" ng-click="getAllPhotos()">get all photos</button>
-  <div class="ui grid centered">
+  <button type="button" ng-click="getAllPhotos()"><a href="#/">get all photos</a></button>
+  <div class="photos">
   <div ng-repeat="image in view.images | limitTo: 18">
     <div class="crop">
       <img ng-src="{{image.url}}"></img>

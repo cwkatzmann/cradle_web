@@ -50,7 +50,7 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 }]);
 
 
-remember whether user is shipping off just new photos or all their photos
+//remember whether user is shipping off just new photos or all their photos
 app.service('fetchProperties', function(){
   var fetchType;
   return {
@@ -63,7 +63,7 @@ app.service('fetchProperties', function(){
   }
 })
 
-app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties' function($scope, $http, rawPhotosFactory, fetchProperties) {
+app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
     $scope.view = {};
     $scope.view.loading = true;
 
@@ -91,6 +91,7 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
 
     $scope.view = {};
     $scope.view.loading = true;
+    $scope.view.gotAll = false;
 
     if (fetchProperties.getFetch() === "all"){
         $http({
@@ -101,7 +102,7 @@ app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchP
               .then(function success(response) {
                   console.log(response);
                   $scope.view.response = response.data;
-                  $scope.view.loading = false;
+                  $scope.view.gotAll = true;
               }, function error(response) {
                   console.log('error');
               });
