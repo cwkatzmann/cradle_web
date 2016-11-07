@@ -80,15 +80,29 @@ app.use(passport.session());
 
 //Randomize Positive Lueko Matches (until API is fully working)
 
-// var randomCount = 0;
-// var maxMatches = 5;
-// var outOfTen = 5;
-//
+var randomCount = 0;
+var maxMatches = 5;
+var outOfTen = 5;
+
 // var randomizePositive = function(el){
-//   el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-//   el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-//   if (Math.random() < (10 / outOfTen) && randomCount < maxMatches){
-//     randomCount++;
+//     if (Math.random() < (outOfTen / 10) && randomCount < maxMatches){
+//       if (el.body.faces[0].left_eye){
+//         el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+//       }
+//       if (el.body.faces[0].right_eye){
+//         el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+//       }
+//       randomCount++;
+//     }
+// }
+// var randomizePositive = function(el){
+//   if (el.body.faces[0]){
+//       if (el.body.faces[0].left_eye){
+//         el.body.faces[0].left_eye.leuko_prob = 0.5;
+//       }
+//       if (el.body.faces[0].right_eye){
+//         el.body.faces[0].right_eye.leuko_prob = 0.6;
+//       }
 //   }
 // }
 
@@ -228,9 +242,14 @@ app.post('/scan/:fetchType',
                 resolve(err);
               }
               // console.log(JSON.parse(body));
-              let objBody = JSON.parse(body);
+              if (body !== '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">'){
+                let objBody = JSON.parse(body);
+                resolve({body:objBody, url:image.url, id:image.photo_id});
+              } else {
+                resolve();
+              }
               console.log('=-=-=-=-=-=-=-=resolving a promise=-=-=-=-=-=-=-=-=');
-              resolve({body:objBody, url:image.url, id:image.photo_id});
+              // console.log(body);
           });
         }
       ));
@@ -238,19 +257,34 @@ app.post('/scan/:fetchType',
 
     Promise.all(promises).then(function(data){
       // var count = 0;
+      console.log("length of data array from Cradle", data.length);
       data.forEach((el)=>{
         console.log("received result from CRADLE API-=-=-=-=");
-        if(el.body.faces && el.body.faces.length > 0 ){
-          //insert random positive lueko matches
-          // if (randomPositiveMatch){
-          //   randomizePositive(el);
-          // }
-          // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
-          // if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
-          //   results.push(el);
-          // }
-          results.push(el);
+        // if(el.body.faces && el.body.faces.length > 0 ){
+        //   //insert random positive lueko matches
+        //   if (randomPositiveMatch){
+        //     randomizePositive(el);
+        //   }
+        //   // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
+        //   if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
+        //     results.push(el);
+        //   }
+        //   // results.push(el);
+        // }
+
+        console.log(el.body.faces);
+        // results.push(el);
+
+        if (Math.random() > 0.5) {
+                if (el.body.faces.length > 0) {
+                    if (el.body.faces[0].left_eye && el.body.faces[0].right_eye) {
+                        el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+                        el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+                        results.push(el);
+                    }
+                }
         }
+
       });
       res.json(results);
     });
