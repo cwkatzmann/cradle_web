@@ -122,10 +122,13 @@ app.get('/auth/facebook/callback',
     });
   });
 
-app.get('/profile',
+app.get('/profile/:fetchType',
   // require('connect-ensure-login').ensureLoggedIn(),
   //^what does this do if not logged in?
   function(req, res){
+
+    var fetchType = req.params.fetchType;
+    console.log("fetchType=-=-=-=-=-=-=-=-=", fetchType);
 
     request('https://graph.facebook.com/v2.8/' + req.user.id + '/photos?type=uploaded&limit=999&access_token=' + req.user.token, (err, response, body) => {
       //handles invalid token
@@ -138,19 +141,27 @@ app.get('/profile',
         JSON.parse(body).data.forEach((el) => {
           promises.push(new Promise(
             function(resolve, reject){
-              knex('photos')
-              .where('facebook_photo_id', el.id)
-              .first()
-              .then((photo) => {
-                if(!photo){
-                  //send request for photo url to graph api here
-                  request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
-                    resolve({url:response.request.uri.href, id: el.id});
-                  });
-                } else {
+
+              if (fetchType === "new"){
+                knex('photos')
+                .where('facebook_photo_id', el.id)
+                .first()
+                .then((photo) => {
+                  if(!photo){
+                    //send request for photo url to graph api here
+                    request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
+                      resolve({url:response.request.uri.href, id: el.id});
+                    });
+                  } else {
                     resolve(false);
-                }
-              });
+                  }
+                });
+              } else if (fetchType === "all"){
+                console.log("getting all the images=-=-=-=-=-=");
+                request('https://graph.facebook.com/v2.8/' + el.id + '/picture?access_token=' + req.user.token, (err, response, body) => {
+                  resolve({url:response.request.uri.href, id: el.id});
+                });
+              }
             }
           ));
         });

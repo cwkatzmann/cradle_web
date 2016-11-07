@@ -26,7 +26,7 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 
             $http({
                 method: 'GET',
-                url: '/profile'
+                url: '/profile/new'
             }).then(function success(response) {
                 //if response.body.redirect is true, the FB OAuth token has expired, so redirect browser to facebook login.
                 if (response.data.redirect) {
@@ -49,7 +49,21 @@ app.factory('rawPhotosFactory', ['$http', function($http) {
 
 }]);
 
-app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
+
+remember whether user is shipping off just new photos or all their photos
+app.service('fetchProperties', function(){
+  var fetchType;
+  return {
+    setFetch: function(val){
+      fetchType = val;
+    },
+    getFetch: function(){
+      return fetchType;
+    }
+  }
+})
+
+app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties' function($scope, $http, rawPhotosFactory, fetchProperties) {
     $scope.view = {};
     $scope.view.loading = true;
 
@@ -59,22 +73,50 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', func
         $scope.$digest();
         $scope.view.loading = false;
     });
+
+    $scope.getAllPhotos = function(){
+      fetchProperties.setFetch('all');
+      $http({
+          method: 'GET',
+          url: '/profile/all'
+      }).then(function(response){
+        $scope.view.images = response.data.images;
+        // $scope.$digest();
+      })
+    }
+
 }]);
 
-app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', function($scope, $http, rawPhotosFactory) {
+app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
 
     $scope.view = {};
     $scope.view.loading = true;
 
-    rawPhotosFactory.getRawPhotos().then(function(response) {
+    if (fetchProperties.getFetch() === "all"){
+        $http({
+            method: 'GET',
+            url: '/profile/all'
+        }).then(function(response){
+          $http.post('/scan', response.data.images)
+              .then(function success(response) {
+                  console.log(response);
+                  $scope.view.response = response.data;
+                  $scope.view.loading = false;
+              }, function error(response) {
+                  console.log('error');
+              });
+        })
+    } else {
+      rawPhotosFactory.getRawPhotos().then(function(response) {
         $http.post('/scan', response.data.images)
-            .then(function success(response) {
-                console.log(response);
-                $scope.view.response = response.data;
-                $scope.view.loading = false;
-            }, function error(response) {
-                console.log('error');
-            });
-    });
+        .then(function success(response) {
+          console.log(response);
+          $scope.view.response = response.data;
+          $scope.view.loading = false;
+        }, function error(response) {
+          console.log('error');
+        });
+      });
+    }
 
 }])
