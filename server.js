@@ -80,9 +80,9 @@ app.use(passport.session());
 
 //Randomize Positive Lueko Matches (until API is fully working)
 
-var randomCount = 0;
-var maxMatches = 5;
-var outOfTen = 5;
+// var randomCount = 0;
+// var maxMatches = 5;
+// var outOfTen = 5;
 
 // var randomizePositive = function(el){
 //     if (Math.random() < (outOfTen / 10) && randomCount < maxMatches){
@@ -211,7 +211,7 @@ app.get('/profile/:fetchType',
 app.post('/scan/:fetchType',
   (req, res) => {
 
-    console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+    // console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
 
     var fetchType = req.params.fetchType;
 
@@ -248,7 +248,7 @@ app.post('/scan/:fetchType',
               } else {
                 resolve();
               }
-              console.log('=-=-=-=-=-=-=-=resolving a promise=-=-=-=-=-=-=-=-=');
+              // console.log('=-=-=-=-=-=-=-=resolving a promise=-=-=-=-=-=-=-=-=');
               // console.log(body);
           });
         }
@@ -259,7 +259,7 @@ app.post('/scan/:fetchType',
       // var count = 0;
       console.log("length of data array from Cradle", data.length);
       data.forEach((el)=>{
-        console.log("received result from CRADLE API-=-=-=-=");
+        // console.log("received result from CRADLE API-=-=-=-=");
         // if(el.body.faces && el.body.faces.length > 0 ){
         //   //insert random positive lueko matches
         //   if (randomPositiveMatch){
