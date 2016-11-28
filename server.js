@@ -30,7 +30,6 @@ passport.use(new Strategy({
     // be associated with a user record in the application's database, which
     // allows for account linking and authentication with other identity
     // providers.
-    console.log("accesstoken", accessToken);
     profile.token = accessToken;
     return cb(null, profile);
   }));
@@ -129,7 +128,7 @@ app.get('/auth/facebook',
 app.get('/auth/facebook/callback',
   passport.authenticate('facebook', { failureRedirect: '/auth/facebook' }), (req, res) => {
     //store user ID and Name and profile pic in DB if ID not exists(for later use in checking for more photos, not necessarily for login purpose becasue Passport can handle that).
-    knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value}).then( () => {
+    knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value, access_token: req.user.token}).then( () => {
       res.redirect('/');
     }).catch( (err) => {
       res.redirect('/');
@@ -222,6 +221,7 @@ app.post('/scan/:fetchType',
 
     //save scanned images to DB
     if (fetchType === "new"){
+
       if (saveScannedImages){
         images.forEach((image) => {
           knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
@@ -233,7 +233,9 @@ app.post('/scan/:fetchType',
 
 
     images.forEach((image) => {
+
       var preppedUrl = image.url.replace('https', 'http');
+
       promises.push(new Promise(
         function(resolve, reject){
             request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
@@ -257,7 +259,7 @@ app.post('/scan/:fetchType',
 
     Promise.all(promises).then(function(data){
       // var count = 0;
-      console.log("length of data array from Cradle", data.length);
+      // console.log("length of data array from Cradle", data.length);
       data.forEach((el)=>{
         // console.log("received result from CRADLE API-=-=-=-=");
         // if(el.body.faces && el.body.faces.length > 0 ){
