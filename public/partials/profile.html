@@ -1,24 +1,37 @@
 <div class="loader" ng-show="view.loading">Loading...</div>
-  <div ng-hide="view.loading">
-    <div class="ui one column stackable center aligned page grid">
-      <h3 class="column twelve wide">Profile</h3>
-      <p ng-hide="view.gotAll" class="column twelve wide">Hello, {{view.username + '.'}} We found {{view.images.length || 0}} new photos that have not been scanned.</p>
-      <p ng-show="view.gotAll" class="column twelve wide">
-        Retrieved all your Facebook photos for scanning.
-      </p>
-      <a href="#/scan" class="ui column button">
-        scan now
-      </a>
-      <a href="#/" class="ui column button" ng-hide"view.gotAll" ng-click="getAllPhotos()">
-        get all photos
-      </a>
+<div ng-hide="view.loading">
+
+
+    <div class="message-wrapper">
+        <p ng-hide="view.gotAll" class="column twelve wide welcome-text">Hello, <strong>{{view.username}}</strong>. We found {{view.images.length || 0}} new photos that have not been scanned.</p>
+        <p ng-show="view.gotAll" class="column twelve wide welcome-text">
+            Retrieved all your Facebook photos for scanning.
+        </p>
     </div>
+
+    <div class="button-wrapper">
+
+        <a href="#/scan">
+            <div class="custom-button">
+                scan now
+            </div>
+        </a>
+
+        <a href="#/" class="" ng-hide "view.gotAll" ng-click="getAllPhotos()">
+            <div class="custom-button">
+                get all photos
+            </div>
+        </a>
+
+    </div>
+
+
     <div class="photos">
-      <div ng-repeat="image in view.images | limitTo: 18">
-        <div class="crop">
-          <img ng-src="{{image.url}}"></img>
+        <div ng-repeat="image in view.images | limitTo: 18">
+            <div class="crop">
+                <img ng-src="{{image.url}}"></img>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-<!-- <footer ng-hide="view.loading"></footer> -->
+
+</div>
