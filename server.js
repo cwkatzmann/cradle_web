@@ -249,7 +249,7 @@ app.post('/scan/:fetchType',
           // if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
           //   results.push(el);
           // }
-          results.push(el);
+          results.push(el); //remove this if commenting out above
         }
       });
       res.json(results);
