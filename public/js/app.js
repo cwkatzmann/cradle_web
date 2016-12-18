@@ -1,9 +1,26 @@
 var app = angular.module('cradle', ['ngRoute']);
 
-
 if (window.location.hash = "#_=_") {
     window.location.hash = "";
 }
+
+var newPhotos =
+  $http({
+      method: 'GET',
+      url: '/profile/new'
+    }).then(function(results){
+      return results;
+    });
+  });
+
+var allPhotos =
+  $http({
+      method: 'GET',
+      url: '/profile/all'
+    }).then(function(results){
+      return results;
+    });
+  });
 
 app.config(function($routeProvider) {
     $routeProvider.when('/', {
@@ -16,44 +33,66 @@ app.config(function($routeProvider) {
         });
 });
 
-app.factory('rawPhotosFactory', ['$http', function($http) {
+// app.factory('rawPhotosFactory', ['$http', function($http) {
+//
+//     var obj = {};
+//
+//     obj.rawPhotos = [];
+//
+//     obj.getRawPhotos = function() {
+//       $http({
+//           method: 'GET',
+//           url: '/profile/new'
+//         }).then(function(results){
+//           obj.rawPhotos = results;
+//         });
+//     };
+//
+//
+//     return obj;
+//
+// }]);
 
-    var obj = {};
 
-    obj.rawPhotos = [];
+//service that holds onto raw photos value;
 
-    obj.getRawPhotos = function() {
-      $http({
-          method: 'GET',
-          url: '/profile/new'
-        }).then(function(results){
-          obj.rawPhotos = results;
-        })
-    };
-
-
-    return obj;
-
-}]);
-
-
-// remember whether user is shipping off just new photos or all their photos
-app.service('fetchProperties', function(){
-  var fetchType = "new";
+app.service('fbPhotosService', function(){
+  var data = {};
   return {
-    setFetch: function(val){
-      fetchType = val;
+    setData: function(res){
+    data.photos = res.data.images;
+    data.username = res.data.username;
     },
-    getFetch: function(){
-      return fetchType;
+    getData: function(){
+      return data;
     }
   }
 })
 
-app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
+// remember whether user is shipping off just new photos or all their photos
+// app.service('fetchProperties', function(){
+//   var fetchType = "new";
+//   return {
+//     setFetch: function(val){
+//       fetchType = val;
+//     },
+//     getFetch: function(){
+//       return fetchType;
+//     }
+//   };
+// });
+
+app.controller('profileController', ['$scope', '$http', 'photosService', function($scope, $http, rawPhotosFactory, fetchProperties) {
     $scope.view = {};
     $scope.view.loading = true;
     $scope.view.gotAll = false;
+
+    fbPhotosService.setData(newPhotos);
+    $scope.view.data = fbPhotosService.getData();
+
+    $scope.setPhotosToAll = photosService.setPhotos(allPhotos);
+
+    //^^^will this work with two way data binding? Above call to the service will not resolve right away because newPhotos is a promise.
 
     // rawPhotosFactory.getRawPhotos().then(function(response) {
     //   console.log(response);
@@ -62,20 +101,22 @@ app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fet
     //     $scope.view.loading = false;
     //     // $scope.$digest();
     // });
-    rawPhotosFactory.getRawPhotos();
-    $scope.stuff = rawPhotosFactory.rawPhotos;
 
-    $scope.getAllPhotos = function(){
-      fetchProperties.setFetch('all');
-      $http({
-          method: 'GET',
-          url: '/profile/all'
-      }).then(function(response){
-        $scope.view.images = response.data.images;
-        $scope.view.gotAll = true;
-        // $scope.$digest();
-      })
-    }
+    // rawPhotosFactory.getRawPhotos();
+    // $scope.stuff = rawPhotosFactory.rawPhotos;
+    //
+
+    // $scope.getAllPhotos = function(){
+    //   fetchProperties.setFetch('all');
+    //   $http({
+    //       method: 'GET',
+    //       url: '/profile/all'
+    //   }).then(function(response){
+    //     $scope.view.images = response.data.images;
+    //     $scope.view.gotAll = true;
+    //     // $scope.$digest();
+    //   })
+    // }
 
 }]);
 

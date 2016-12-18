@@ -153,6 +153,7 @@ app.get('/profile/:fetchType',
           promises.push(new Promise(
             function(resolve, reject){
 
+              //check the database records against the data object containing facebook photo post ids. If the data object contains
               if (fetchType === "new"){
                 knex('photos')
                 .where('facebook_photo_id', el.id)
@@ -188,17 +189,17 @@ app.get('/profile/:fetchType',
               image.photo_id = el.id;
               data.images.push(image);
             }
-          })
+          });
           data.username = req.user.displayName;
           res.json(data);
-        })
+        });
       }
     });
 
 
 
 
-    //query DB for user Name and Prfofile pic by FB_id(req.user.id);
+    //query DB for user Name and Profile pic by FB_id(req.user.id);
     //query for all photos that have been analyzed in DB;
     //query Facebook for user photos
     //compare above two
