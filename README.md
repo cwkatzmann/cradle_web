@@ -43,7 +43,7 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 
 <br>
 <br>
-[![https://gyazo.com/e2f7039b7438447e147089f4ddb1e750](https://i.gyazo.com/e2f7039b7438447e147089f4ddb1e750.png)](https://gyazo.com/e2f7039b7438447e147089f4ddb1e750)
+[![https://gyazo.com/e2f7039b7438447e147089f4ddb1e750](https://i.gyazo.com/e2f7039b7438447e147089f4ddb1e750.png)](https://gyazo.com/e3d5cc3f4943efb0a5a06e5e64b8b73a)
 <br>
 * Choose to login with Facebook and grant our app access to your photos.
 <br><br><br><br>
