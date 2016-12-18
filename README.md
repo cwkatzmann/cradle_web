@@ -15,7 +15,6 @@ Cradle was built on the following technologies:
 * PostgreSQL
 <hr>
 
-
 ### Our Process
 
 Throughout our Galvanize cohort we have learned to love **pair programming**. Over the course of a week to build this project, we (Tim and Chris) worked exclusively on one screen. We consistently experienced the value of working together as a way to avoid both small syntax errors and bigger hurrdles of working in unfamiliar environemtns. The practice of verbalizing our thought process and collaborative problem-solving increased both the clarity of our code and the speed of our development time.
@@ -24,9 +23,7 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 
 * This was our first application built in Angular. While the rest of our class was working through the Angular curriculum, we opted to venture out on our own with a real world project. We learned to love the Angular documentation and had many opportunities to hone our Google skills.
 
-*(TODO) We learned to work with the Facebook Graph API to gain user's persmision to access their account info and photos. 
-
-
+* (TODO) We learned to work with the Facebook Graph API to gain user's persmision to access their account info and photos. 
 
 <hr>
 ### Other technologies used for this project:
@@ -48,6 +45,28 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 * Choose to login with Facebook and grant our app access to your photos.
 <br><br><br><br>
 
+##  2. Choose Photos to Scan
 
+<br>
+<br>
+(IMG)
+<br>
+* Choose to login with Facebook and grant our app access to your photos.
+<br><br><br><br>
+
+##  3. Review the Results
+
+<br>
+<br>
+(IMG)
+<br>
+* Choose to login with Facebook and grant our app access to your photos.
+<br><br><br><br>
+
+
+
+### Future Plans
+
+(TODO)
 
 Thank you for stopping by!
