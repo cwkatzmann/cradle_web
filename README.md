@@ -49,18 +49,18 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 
 <br>
 <br>
-(IMG)
+[![https://gyazo.com/06a7193a4fa08d68a95c8e6fff80c2cc](https://i.gyazo.com/06a7193a4fa08d68a95c8e6fff80c2cc.png)](https://gyazo.com/06a7193a4fa08d68a95c8e6fff80c2cc)
 <br>
-* Choose to login with Facebook and grant our app access to your photos.
+* Select whether to scan all your photos, or just any new photos since last time you've visited used our service. Our app will keep track of what photos have been scanned and any positive matches.
 <br><br><br><br>
 
 ##  3. Review the Results
 
 <br>
 <br>
-(IMG)
+[![https://gyazo.com/206b228f25f02280ec8a690ae36b9c66](https://i.gyazo.com/206b228f25f02280ec8a690ae36b9c66.png)](https://gyazo.com/206b228f25f02280ec8a690ae36b9c66)
 <br>
-* Choose to login with Facebook and grant our app access to your photos.
+* Review the scan results
 <br><br><br><br>
 
 
