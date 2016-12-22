@@ -1,3 +1,5 @@
+/* jshint esversion:6 */
+
 const randomPositiveMatch = true;
 const saveScannedImages = false;
 
@@ -66,7 +68,7 @@ app.use('/static', express.static(__dirname + '/public'));
 app.use(require('morgan')('tiny'));
 app.use(require('cookie-parser')());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
 
@@ -153,6 +155,8 @@ app.get('/profile/:fetchType',
           promises.push(new Promise(
             function(resolve, reject){
 
+              //check the database records against the data object containing facebook photo post ids. If the data object contains
+              //getting all unscanned photos
               if (fetchType === "new"){
                 knex('photos')
                 .where('facebook_photo_id', el.id)
@@ -188,17 +192,17 @@ app.get('/profile/:fetchType',
               image.photo_id = el.id;
               data.images.push(image);
             }
-          })
+          });
           data.username = req.user.displayName;
           res.json(data);
-        })
+        });
       }
     });
 
 
 
 
-    //query DB for user Name and Prfofile pic by FB_id(req.user.id);
+    //query DB for user Name and Profile pic by FB_id(req.user.id);
     //query for all photos that have been analyzed in DB;
     //query Facebook for user photos
     //compare above two
@@ -207,27 +211,26 @@ app.get('/profile/:fetchType',
       //on page:link to a route to scan photos
 });
 
-app.post('/scan/:fetchType',
+app.post('/scan/:scanType',
   (req, res) => {
 
-    // console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
+    console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
 
-    var fetchType = req.params.fetchType;
+    var scanType = req.params.scanType;
 
     var images = req.body;
     var promises = [];
     var results = [];
-    // console.log("scan route is receiving these images", images);
 
     //save scanned images to DB
-    if (fetchType === "new"){
-
-      if (saveScannedImages){
+    //fetchType prevents the program from trying to add photos to the database that have already been scanned
+    if (scanType === "new") {
+      if (saveScannedImages) {
         images.forEach((image) => {
           knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
             console.log("saved a scanned image");
-          })
-        })
+          });
+        });
       }
     }
 
@@ -238,57 +241,55 @@ app.post('/scan/:fetchType',
 
       promises.push(new Promise(
         function(resolve, reject){
-            request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body){
-              if(err){
+            request.post('https://leuko-api.rhobota.com/v1.0.0/process_photo?image_url=' + urlencode(preppedUrl) + '&annotate_image=true', function(err, response, body) {
+              if(err) {
                 console.error(err);
                 resolve(err);
               }
-              // console.log(JSON.parse(body));
+              console.log(body);
               if (body !== '<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">'){
                 let objBody = JSON.parse(body);
                 resolve({body:objBody, url:image.url, id:image.photo_id});
               } else {
                 resolve();
               }
-              // console.log('=-=-=-=-=-=-=-=resolving a promise=-=-=-=-=-=-=-=-=');
-              // console.log(body);
           });
         }
       ));
     });
 
     Promise.all(promises).then(function(data){
-      // var count = 0;
-      // console.log("length of data array from Cradle", data.length);
-      data.forEach((el)=>{
-        // console.log("received result from CRADLE API-=-=-=-=");
-        // if(el.body.faces && el.body.faces.length > 0 ){
-        //   //insert random positive lueko matches
-        //   if (randomPositiveMatch){
-        //     randomizePositive(el);
-        //   }
-        //   // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
-        //   if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
-        //     results.push(el);
-        //   }
-        //   // results.push(el);
-        // }
-
-        console.log(el.body.faces);
-        // results.push(el);
-
-        if (Math.random() > 0.5) {
-                if (el.body.faces.length > 0) {
-                    if (el.body.faces[0].left_eye && el.body.faces[0].right_eye) {
-                        el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-                        el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-                        results.push(el);
-                    }
-                }
-        }
-
-      });
-      res.json(results);
+      // // var count = 0;
+      // // console.log("length of data array from Cradle", data.length);
+      // data.forEach((el) => {
+      //   // console.log("received result from CRADLE API-=-=-=-=");
+      //   // if(el.body.faces && el.body.faces.length > 0 ){
+      //   //   //insert random positive lueko matches
+      //   //   if (randomPositiveMatch){
+      //   //     randomizePositive(el);
+      //   //   }
+      //   //   // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
+      //   //   if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
+      //   //     results.push(el);
+      //   //   }
+      //   //   // results.push(el);
+      //   // }
+      //
+      //   console.log(el.body.faces);
+      //   // results.push(el);
+      //
+      //   if (Math.random() > 0.5) {
+      //           if (el.body.faces.length > 0) {
+      //               if (el.body.faces[0].left_eye && el.body.faces[0].right_eye) {
+      //                   el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+      //                   el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
+      //                   results.push(el);
+      //               }
+      //           }
+      //   }
+      //
+      // });
+      res.json(data);
     });
 
     //get photo ids of photos to be evaluated by cradle API from req.body.
@@ -297,7 +298,6 @@ app.post('/scan/:fetchType',
       //upload any positive matches to an S3 bucket and store bucket URLs in DB table for positive results
       //use cradle's JSON response and the S3 bucket address to populate a new JSON object which angular will use to render the results.
   });
-
 app.listen(port, function() {
   console.log('server listening on port ' + port);
 });

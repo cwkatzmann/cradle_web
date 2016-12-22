@@ -1,7 +1,6 @@
 var app = angular.module('cradle', ['ngRoute']);
 
-
-if (window.location.hash = "#_=_") {
+if (window.location.hash === "#_=_") {
     window.location.hash = "";
 }
 
@@ -16,110 +15,87 @@ app.config(function($routeProvider) {
         });
 });
 
-app.factory('rawPhotosFactory', ['$http', function($http) {
+//service that holds onto raw photos value;
 
-    var obj = {};
+app.service('fbPhotosService', ['$http', function($http){
+  var data = {};
 
-    obj.rawPhotos = [];
-
-    obj.getRawPhotos = function() {
-      $http({
-          method: 'GET',
-          url: '/profile/new'
-        }).then(function(results){
-          obj.rawPhotos = results;
-        })
-    };
-
-
-    return obj;
-
+  return {
+    setData: function(res){
+    data.images = res.data.images;
+    data.username = res.data.username;
+    },
+    getData: function(){
+      return data;
+    }
+  };
 }]);
 
-
-// remember whether user is shipping off just new photos or all their photos
-app.service('fetchProperties', function(){
-  var fetchType = "new";
-  return {
-    setFetch: function(val){
-      fetchType = val;
-    },
-    getFetch: function(){
-      return fetchType;
-    }
-  }
-})
-
-app.controller('profileController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
+app.controller('profileController', ['$scope', '$http', 'fbPhotosService', function($scope, $http, fbPhotosService) {
     $scope.view = {};
     $scope.view.loading = true;
     $scope.view.gotAll = false;
 
-    // rawPhotosFactory.getRawPhotos().then(function(response) {
-    //   console.log(response);
-    //     $scope.view.images = response.data.images;
-    //     $scope.view.username = response.data.username;
-    //     $scope.view.loading = false;
-    //     // $scope.$digest();
-    // });
-    rawPhotosFactory.getRawPhotos();
-    $scope.stuff = rawPhotosFactory.rawPhotos;
+    $http({
+        method: 'GET',
+        url: '/profile/new'
+      }).then(function(results){
+        console.log('the service ran');
+        fbPhotosService.setData(results);
+        console.log(results);
+        $scope.view.data = results.data;
+        $scope.view.loading = false;
+        $scope.view.gotAll = true;
+      });
 
     $scope.getAllPhotos = function(){
-      fetchProperties.setFetch('all');
       $http({
           method: 'GET',
           url: '/profile/all'
-      }).then(function(response){
-        $scope.view.images = response.data.images;
-        $scope.view.gotAll = true;
-        // $scope.$digest();
-      })
-    }
+        }).then(function(results){
+          fbPhotosService.setData(results);
+          console.log('the service ran');
+          $scope.view.data = results.data;
+          $scope.view.loading = false;
+          $scope.view.gotAll = true;
+        });
+    };
 
 }]);
 
-app.controller('scanController', ['$scope', '$http', 'rawPhotosFactory', 'fetchProperties', function($scope, $http, rawPhotosFactory, fetchProperties) {
+app.controller('scanController', ['$scope', '$http', 'fbPhotosService', function($scope, $http, fbPhotosService) {
 
     $scope.view = {};
     $scope.view.loading = true;
 
-    if (fetchProperties.getFetch() === "all"){
-        console.log("scanning all the photos");
-        $http({
-            method: 'GET',
-            url: '/profile/all'
-        }).then(function(response){
-          $http.post('/scan/all', response.data.images)
-              .then(function success(response) {
-                  $scope.view.response = response.data;
-                  $scope.view.loading = false;
-                  if ($scope.view.response.length > 0){
-                    $scope.view.resultsFound = true;
-                  } else {
-                    $scope.view.resultsFound = false;
-                  }
-              }, function error(response) {
-                  console.log('error');
-              });
-        })
-    } else if (fetchProperties.getFetch() === "new"){
-      rawPhotosFactory.getRawPhotos().then(function(response) {
-        $http.post('/scan/new', response.data.images)
-        .then(function success(response) {
-          $scope.view.response = response.data;
-          $scope.view.loading = false;
-          if ($scope.view.response.length > 0){
-            $scope.view.resultsFound = true;
-          } else {
-            $scope.view.resultsFound = false;
+    var images = fbPhotosService.getData().images;
+
+    console.log("sent a scan request");
+    $http.post('/scan/all', images).then(function success(response) {
+      console.log(response);
+      var filteredData = response.data.filter(function(obj){
+        obj.body.faces.forEach(function(face){
+          console.log(face);
+          var match = false;
+          if(face.left_eye){
+            if (face.left_eye.leuko_prob >= 0.5) { match = true;}
           }
-        }, function error(response) {
-          console.log('error');
+          if(face.right_eye){
+            if (face.right_eye.leuko_prob >= 0.5) { match = true;}
+          }
+          return match;
         });
       });
-    }
 
+      $scope.view.response = filteredData;
+      $scope.view.loading = false;
+      if ($scope.view.response.length > 0){
+        $scope.view.resultsFound = true;
+      } else {
+        $scope.view.resultsFound = false;
+      }
+    }, function error(response) {
+      console.log('error');
+    });
 
-
-}])
+}]);
