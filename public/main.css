@@ -68,12 +68,21 @@
 
 /*-=-=-=-=-=-=-=-=-=-=LOGIN PAGE=-=-=-=-=-=-=-=-=-=-*/
 
+body {
+  background-color: #E8FFFD;
+}
+
 .header-wrapper {
   display: flex;
   justify-content: space-between;
-  background-color: #0E6EB8;
+  /*background-color: #0E6EB8;*/
+  /*background-color: #02CAFF;*/
+  background-color: #30A3AD;
+  /*background-color: #E8FFFD;*/
+  color: #071D36;
   color: white;
-  margin-bottom: 50px;
+  /*color: white;*/
+  margin-bottom: 20px;
 }
 
 .header-wrapper a {
@@ -107,6 +116,11 @@
   align-items: center;
   justify-content: center;
   height: 150px;
+  color: #00797d;
+}
+
+.hero-text-wrapper h3 {
+  font-size: 2em;
 }
 
 .main-content-wrapper {
@@ -115,7 +129,14 @@
 }
 
 .description-text {
-  width: 70%;
+  width: 60%;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-radius: 15px;
+  border: 1px solid #C2EAEB;
 }
 
 footer {
@@ -132,6 +153,49 @@ footer {
 }
 
 /*-=-=-=-=-=-=-=-=-=-=PROFILE PAGE=-=-=-=-=-=-=-=-=-=-*/
+
+
+.message-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 150px;
+}
+
+.welcome-text {
+  color: #071D36;
+  font-size: 1.4em;
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+}
+
+
+.custom-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  width: 200px;
+  border: 2px solid #30A3AD;
+  color: #30A3AD;
+  font-size: 15px;
+  border-radius: 10px;
+}
+
+.custom-button:hover {
+  background-color: #30A3AD;
+  color: white;
+}
+
+.button-wrapper a {
+  margin: 20px;
+}
+
 
 .photos {
   /* Prevent vertical gaps */
@@ -190,6 +254,18 @@ footer {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 20px;
+}
+
+.scan-header-wrapper h3 {
+  font-size: 2em;
+  color: #071D36;
+}
+
+.positive-match-text {
+  color: #071D36;
+  font-size: 1.2em;
+  margin: 5px;
 }
 
 .flagged-img {
