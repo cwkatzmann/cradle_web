@@ -2,20 +2,22 @@
     <div ng-hide="view.loading">
         <div class="scan-header-wrapper">
             <h3>Results</h3>
+
             <div ng-hide="view.resultFound" class="results-header-wrapper">
-              <div>
+              <div class="positive-match-text">
                 <i class="red warning sign icon"></i>
                 CRADLE detected {{view.response.length}} pictures with white eye. White eye can sometimes be a sympton of serious eye disease.
               </div>
-              <div><a href="http://www.webmd.com/cancer/what-is-retinoblastoma">Click here for suggested next steps.</a></div>
+              <div class="positive-match-text"><a href="http://www.webmd.com/cancer/what-is-retinoblastoma">Click here for suggested next steps.</a></div>
             </div>
 
-            <div ng-show="view.resultFound">
+            <div ng-show="view.resultFound" class="results-header-wrapper">
               <div>
                 <i class="green checkmark icon"></i>
                 CRADLE scanned {{view.response.length}} photos and was not able to detect any pictures with white eye.
               </div>
             </div>
+
         </div>
         <div ng-repeat="result in view.response">
             <h4 class="ui horizontal divider header">Match {{$index + 1}}</h4>
