@@ -26,7 +26,7 @@
 
 
     <div class="photos">
-        <div ng-repeat="image in view.images | limitTo: 18">
+        <div ng-repeat="image in view.data.images">
             <div class="crop">
                 <img ng-src="{{image.url}}"></img>
             </div>

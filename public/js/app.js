@@ -40,9 +40,7 @@ app.controller('profileController', ['$scope', '$http', 'fbPhotosService', funct
         method: 'GET',
         url: '/profile/new'
       }).then(function(results){
-        console.log('the service ran');
         fbPhotosService.setData(results);
-        console.log(results);
         $scope.view.data = results.data;
         $scope.view.loading = false;
         $scope.view.gotAll = true;
@@ -54,7 +52,6 @@ app.controller('profileController', ['$scope', '$http', 'fbPhotosService', funct
           url: '/profile/all'
         }).then(function(results){
           fbPhotosService.setData(results);
-          console.log('the service ran');
           $scope.view.data = results.data;
           $scope.view.loading = false;
           $scope.view.gotAll = true;
@@ -67,29 +64,23 @@ app.controller('scanController', ['$scope', '$http', 'fbPhotosService', function
 
     $scope.view = {};
     $scope.view.loading = true;
+    $scope.view.results = [];
 
     var images = fbPhotosService.getData().images;
-
-    console.log("sent a scan request");
     $http.post('/scan/all', images).then(function success(response) {
-      console.log(response);
-      var filteredData = response.data.filter(function(obj){
+      response.data.forEach(function(obj){
         obj.body.faces.forEach(function(face){
-          console.log(face);
-          var match = false;
-          if(face.left_eye){
-            if (face.left_eye.leuko_prob >= 0.5) { match = true;}
-          }
-          if(face.right_eye){
-            if (face.right_eye.leuko_prob >= 0.5) { match = true;}
-          }
-          return match;
-        });
+        //structured this way instead of in one || for cases where one eye is null and the program will error when trying to access the leuko_prob of null
+        if(face.left_eye){
+          if (face.left_eye.leuko_prob >= 0.5) { $scope.view.results.push({face: face, url: obj.url});}
+        }
+        if(face.right_eye){
+          if (face.right_eye.leuko_prob >= 0.5) { $scope.view.results.push({face: face, url: obj.url});}
+        }
       });
-
-      $scope.view.response = filteredData;
+    });
       $scope.view.loading = false;
-      if ($scope.view.response.length > 0){
+      if ($scope.view.results.length > 0){
         $scope.view.resultsFound = true;
       } else {
         $scope.view.resultsFound = false;
