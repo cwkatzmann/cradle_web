@@ -99,7 +99,9 @@ app.get('/auth/facebook/callback',
     knex('users').insert({facebook_id: req.user.id, display_name: req.user.displayName, profile_pic: req.user.photos[0].value, access_token: req.user.token}).then( () => {
       res.redirect('/');
     }).catch( (err) => {
-      res.redirect('/');
+      //if there is an error inserting the user into the db because user already exists (code 23505), proceed to index route.
+      if(err.code === '23505') { res.redirect('/'); }
+      else {console.log(err); res.sendStatus(500);}
     });
   });
 
