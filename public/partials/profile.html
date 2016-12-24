@@ -3,7 +3,7 @@
 
 
     <div class="message-wrapper">
-        <p ng-hide="view.gotAll" class="column twelve wide welcome-text">Hello, <strong>{{view.username}}</strong>. We found {{view.images.length || 0}} new photos that have not been scanned.</p>
+        <p ng-hide="view.gotAll" class="column twelve wide welcome-text">Hello, <strong>{{view.data.username}}</strong>. We found {{view.data.images.length || 0}} new photos that have not been scanned.</p>
         <p ng-show="view.gotAll" class="column twelve wide welcome-text">
             Retrieved all your Facebook photos for scanning.
         </p>
@@ -17,7 +17,7 @@
             </div>
         </a>
 
-        <a href="#/" class="" ng-hide "view.gotAll" ng-click="getAllPhotos()">
+        <a href="#/" class="" ng-hide="view.gotAll" ng-click="getAllPhotos()">
             <div class="custom-button">
                 get all photos
             </div>

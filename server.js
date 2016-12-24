@@ -1,8 +1,5 @@
 /* jshint esversion:6 */
 
-const randomPositiveMatch = true;
-const saveScannedImages = false;
-
 const express = require('express');
 const request = require('request');
 const knex = require('./knex');
@@ -77,37 +74,6 @@ app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveU
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-//Randomize Positive Lueko Matches (until API is fully working)
-
-// var randomCount = 0;
-// var maxMatches = 5;
-// var outOfTen = 5;
-
-// var randomizePositive = function(el){
-//     if (Math.random() < (outOfTen / 10) && randomCount < maxMatches){
-//       if (el.body.faces[0].left_eye){
-//         el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-//       }
-//       if (el.body.faces[0].right_eye){
-//         el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-//       }
-//       randomCount++;
-//     }
-// }
-// var randomizePositive = function(el){
-//   if (el.body.faces[0]){
-//       if (el.body.faces[0].left_eye){
-//         el.body.faces[0].left_eye.leuko_prob = 0.5;
-//       }
-//       if (el.body.faces[0].right_eye){
-//         el.body.faces[0].right_eye.leuko_prob = 0.6;
-//       }
-//   }
-// }
-
-
 // Define routes.
 app.get('/',
 //render the index page;
@@ -137,13 +103,9 @@ app.get('/auth/facebook/callback',
     });
   });
 
-app.get('/profile/:fetchType',
-  // require('connect-ensure-login').ensureLoggedIn(),
-  //^what does this do if not logged in?
-  function(req, res){
+app.get('/profile/:fetchType', function(req, res){
 
     var fetchType = req.params.fetchType;
-    console.log("fetchType=-=-=-=-=-=-=-=-=", fetchType);
 
     request('https://graph.facebook.com/v2.8/' + req.user.id + '/photos?type=uploaded&limit=999&access_token=' + req.user.token, (err, response, body) => {
       //handles invalid token
@@ -154,8 +116,7 @@ app.get('/profile/:fetchType',
         JSON.parse(body).data.forEach((el) => {
           promises.push(new Promise(
             function(resolve, reject){
-
-              //check the database records against the data object containing facebook photo post ids. If the data object contains
+              //check the database records against the data object containing facebook photo post ids. If the data object contains any photo ID's that are not already in the db, fetch the photo urls of those photo id's.
               //getting all unscanned photos
               if (fetchType === "new"){
                 knex('photos')
@@ -182,7 +143,7 @@ app.get('/profile/:fetchType',
         //construct json to render angular with;
         // console.log("promises array:", promises);
         Promise.all(promises).then(function(els){
-          //make object to send as jon here
+          //make object to send as json here
           var data = {};
           data.images = [];
           els.forEach((el) => {
@@ -208,13 +169,11 @@ app.get('/profile/:fetchType',
     //compare above two
     //display conclusion of above to user w/option to scan new photos if they exist
     //render angular page
-      //on page:link to a route to scan photos
+    //on page:link to a route to scan photos
 });
 
 app.post('/scan/:scanType',
   (req, res) => {
-
-    console.log('=-=-=-=-=-=-=-=-=GOT A SCAN REQUEST=-==-=-=-=-=-=-=-=-=-=-=-=-=-=-=');
 
     var scanType = req.params.scanType;
 
@@ -223,15 +182,12 @@ app.post('/scan/:scanType',
     var results = [];
 
     //save scanned images to DB
-    //fetchType prevents the program from trying to add photos to the database that have already been scanned
+    //scanType prevents the program from trying to add photos to the database that have already been scanned
     if (scanType === "new") {
-      if (saveScannedImages) {
         images.forEach((image) => {
           knex('photos').insert({users_facebook_id: req.user.id, facebook_photo_id: image.photo_id, public_facebook_url: image.url}).then( () => {
-            console.log("saved a scanned image");
           });
         });
-      }
     }
 
 
@@ -246,24 +202,6 @@ app.post('/scan/:scanType',
                 console.error(err);
                 resolve(err);
               }
-              console.log(body);
-
-//<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
-// <html><head>
-// <title>500 Internal Server Error</title>
-// </head><body>
-// <h1>Internal Server Error</h1>
-// <p>The server encountered an internal error or
-// misconfiguration and was unable to complete
-// your request.</p>
-// <p>Please contact the server administrator at
-//  [no address given] to inform them of the time this error occurred,
-//  and the actions you performed just before this error.</p>
-// <p>More information about this error may be available
-// in the server error log.</p>
-// <hr>
-// <address>Apache/2.4.7 (Ubuntu) Server at leuko-api.rhobota.com Port 443</address>
-// </body></html>
               if(response.statusCode !== 500){
                 let objBody = JSON.parse(body);
                 resolve({body:objBody, url:image.url, id:image.photo_id});
@@ -274,38 +212,7 @@ app.post('/scan/:scanType',
         }
       ));
     });
-
     Promise.all(promises).then(function(data){
-      // // var count = 0;
-      // // console.log("length of data array from Cradle", data.length);
-      // data.forEach((el) => {
-      //   // console.log("received result from CRADLE API-=-=-=-=");
-      //   // if(el.body.faces && el.body.faces.length > 0 ){
-      //   //   //insert random positive lueko matches
-      //   //   if (randomPositiveMatch){
-      //   //     randomizePositive(el);
-      //   //   }
-      //   //   // only render results if the Cradle API managed to identify an eye (it sometimes returns empty face)
-      //   //   if (el.body.faces[0].left_eye.leuko_prob !== 0 || el.body.faces[0].right_eye.leuko_prob !== 0){
-      //   //     results.push(el);
-      //   //   }
-      //   //   // results.push(el);
-      //   // }
-      //
-      //   console.log(el.body.faces);
-      //   // results.push(el);
-      //
-      //   if (Math.random() > 0.5) {
-      //           if (el.body.faces.length > 0) {
-      //               if (el.body.faces[0].left_eye && el.body.faces[0].right_eye) {
-      //                   el.body.faces[0].left_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-      //                   el.body.faces[0].right_eye.leuko_prob = Math.round((Math.random() * 100)) / 100;
-      //                   results.push(el);
-      //               }
-      //           }
-      //   }
-      //
-      // });
       res.json(data);
     });
 

@@ -21,13 +21,14 @@ app.service('fbPhotosService', ['$http', function($http){
   var data = {};
 
   return {
-    setData: function(res){
+    setData: function(res, scanType){
     data.images = res.data.images;
     data.username = res.data.username;
+    data.scanType = scanType;
     },
     getData: function(){
       return data;
-    }
+    },
   };
 }]);
 
@@ -40,10 +41,9 @@ app.controller('profileController', ['$scope', '$http', 'fbPhotosService', funct
         method: 'GET',
         url: '/profile/new'
       }).then(function(results){
-        fbPhotosService.setData(results);
+        fbPhotosService.setData(results, 'new');
         $scope.view.data = results.data;
         $scope.view.loading = false;
-        $scope.view.gotAll = true;
       });
 
     $scope.getAllPhotos = function(){
@@ -51,7 +51,7 @@ app.controller('profileController', ['$scope', '$http', 'fbPhotosService', funct
           method: 'GET',
           url: '/profile/all'
         }).then(function(results){
-          fbPhotosService.setData(results);
+          fbPhotosService.setData(results, 'all');
           $scope.view.data = results.data;
           $scope.view.loading = false;
           $scope.view.gotAll = true;
@@ -64,29 +64,29 @@ app.controller('scanController', ['$scope', '$http', 'fbPhotosService', function
 
     $scope.view = {};
     $scope.view.loading = true;
-    $scope.view.results = [];
+    $scope.results = [];
+    $scope.images = fbPhotosService.getData().images;
 
-    var images = fbPhotosService.getData().images;
-    $http.post('/scan/all', images).then(function success(response) {
+    $http.post('/scan/' + fbPhotosService.getData().scanType, $scope.images).then(function success(response) {
       response.data.forEach(function(obj){
         obj.body.faces.forEach(function(face){
         //structured this way instead of in one || for cases where one eye is null and the program will error when trying to access the leuko_prob of null
         if(face.left_eye){
-          if (face.left_eye.leuko_prob >= 0.5) { $scope.view.results.push({face: face, url: obj.url});}
+          if (face.left_eye.leuko_prob >= 0.5) { $scope.results.push({face: face, url: obj.url});}
         }
         if(face.right_eye){
-          if (face.right_eye.leuko_prob >= 0.5) { $scope.view.results.push({face: face, url: obj.url});}
+          if (face.right_eye.leuko_prob >= 0.5) { $scope.results.push({face: face, url: obj.url});}
         }
       });
     });
       $scope.view.loading = false;
-      if ($scope.view.results.length > 0){
+      if ($scope.results.length > 0){
         $scope.view.resultsFound = true;
       } else {
         $scope.view.resultsFound = false;
       }
-    }, function error(response) {
-      console.log('error');
+    }, function error(err) {
+      console.log('error:', err);
     });
 
 }]);
