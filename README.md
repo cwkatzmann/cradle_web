@@ -23,7 +23,7 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 
 * This was our first application built in Angular. While the rest of our class was working through the Angular curriculum, we opted to venture out on our own with a real world project. We learned to love the Angular documentation and had many opportunities to hone our Google skills.
 
-* (TODO) We learned to work with the Facebook Graph API to gain user's persmision to access their account info and photos. 
+* We learned to work with the Facebook Graph API to gain user's persmision to access their account info and photos. 
 
 <hr>
 ### Other technologies used for this project:
