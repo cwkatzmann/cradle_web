@@ -34,7 +34,7 @@ Throughout our Galvanize cohort we have learned to love **pair programming**. Ov
 <br><br>
 <br>
 
-# (TODO)Cradle Walkthrough:
+# Cradle Walkthrough:
 <br>
 ##  1. Login
 
