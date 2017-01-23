@@ -17,7 +17,7 @@ Cradle was built on the following technologies:
 
 ### Our Process
 
-Throughout our Galvanize cohort we have learned to love **pair programming**. Over the course of a week to build this project, we (Tim and Chris) worked exclusively on one screen. We consistently experienced the value of working together as a way to avoid both small syntax errors and bigger hurrdles of working in unfamiliar environemtns. The practice of verbalizing our thought process and collaborative problem-solving increased both the clarity of our code and the speed of our development time.
+Throughout our Galvanize cohort we have learned to love **pair programming**. Over the course of a week to build this project, we (Tim and Chris) worked exclusively on one screen. We consistently experienced the value of working together as a way to avoid both small syntax errors and bigger hurdles of working in unfamiliar environemtns. The practice of verbalizing our thought process and collaborative problem-solving increased both the clarity of our code and the speed of our development time.
 
 ### Challenges we faced:
 
